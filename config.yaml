@@ -1,0 +1,11 @@
+kafka:
+  host: localhost
+  port: 9092
+
+sources:
+  dir: ./data
+  files:
+  - synthetic_financial_datasets.csv
+
+streamer:
+  messages_per_second: 1
