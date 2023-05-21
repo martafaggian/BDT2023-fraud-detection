@@ -9,3 +9,11 @@ sources:
 
 streamer:
   messages_per_second: 1
+
+logs:
+  dir: ./logs
+  info_file: info.log
+  warning_file: info.log
+  error_file: error.log
+  critical_file: error.log
+  debug_file: debug.log
