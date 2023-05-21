@@ -4,12 +4,15 @@ import csv
 import argparse
 import pandas as pd
 from omegaconf import OmegaConf
-from broker import Consumer
+from pipeline import Consumer
+from utils import Logger
 
 def main(conf):
-    consumer = Consumer(conf.kafka.host, conf.kafka.port, "test")
-    while True:
-        consumer.retrieve()
+    logger = Logger.get_logger_from_conf("kafka.consumer", conf.logs)
+    consumer = Consumer(conf.kafka.host, conf.kafka.port, "test", logger)
+    if consumer.is_connected():
+        while True:
+            consumer.retrieve()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
