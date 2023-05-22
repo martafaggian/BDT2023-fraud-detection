@@ -5,7 +5,7 @@ from kafka.errors import NoBrokersAvailable
 from utils import Logger
 from abc import ABC, abstractmethod
 
-class NotConnected(Exception):
+class NotConnectedException(Exception):
     def __init__(self, logger, message, *args):
         super().__init__(message)
         self.args = args
@@ -31,7 +31,7 @@ class Broker(ABC):
 
     def check_connected(self):
         if not self.is_connected():
-            raise NotConnected(
+            raise NotConnectedException(
                 self._logger,
                 f'Producer is not connected at {self._host}:{self._port}.')
 
@@ -53,7 +53,7 @@ class Producer(Broker):
             self.set_connected()
         except NoBrokersAvailable as e:
             self.set_disconnected()
-            raise NotConnected(
+            raise NotConnectedException(
                 self._logger,
                 f'No broker available at {self._host}:{self._port}'
             ) from e
@@ -63,7 +63,7 @@ class Producer(Broker):
             self.check_connected()
             self._broker.send(topic, message)
             # TODO: check response
-        except NotConnected as e:
+        except NotConnectedException as e:
             self.set_disconnected()
             raise
 
@@ -80,7 +80,7 @@ class Consumer(Broker, ABC):
             self.set_connected()
         except NoBrokersAvailable as e:
             self.set_disconnected()
-            raise NotConnected(
+            raise NotConnectedException(
                 self._logger,
                 f'No broker available at {self._host}:{self._port}'
             ) from e
