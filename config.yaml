@@ -11,14 +11,18 @@ redis:
   port: 6379
   db: 0
 
-sources:
-  dir: ./data
-
-streamer:
-  - file: synthetic_financial_datasets.csv
-    topic: sfd
-    redis_key: streamer1_active
+streamers:
+  - name: streamer1
+    file: ./data/synthetic_financial_datasets.csv
+    topic: streamer1
+    status_key: streamer1.active
     messages_per_second: 1
+    sleep_disabled: 10
+  - name: streamer2
+    file: ./data/synthetic_financial_datasets.csv
+    topic: streamer2
+    status_key: streamer2.active
+    messages_per_second: 2
     sleep_disabled: 10
 
 logs:

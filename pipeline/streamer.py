@@ -2,6 +2,7 @@ from __future__ import annotations
 import csv
 import time
 from enum import IntEnum
+from threading import Thread
 #
 from utils import Logger
 from pipeline.cache import Cache
@@ -27,9 +28,9 @@ class Streamer:
         csv_file_path: str,
         cache_key: str = "streamer_active",
         producer_topic: str = "custom_source",
-        init_status: StreamerStatus = StreamerStatus.ENABLED,
         messages_per_second: int = 1,
-        sleep_disabled: int = 10 # seconds of sleep if disabled to check again
+        sleep_disabled: int = 10, # seconds of sleep if disabled to check again
+        init_status: StreamerStatus = StreamerStatus.ENABLED,
     ):
         self.logger = logger
         self.file_path = csv_file_path
@@ -99,8 +100,74 @@ class Streamer:
                 self.logger.info(f"Sleeping {self.sleep_disabled} seconds...")
                 time.sleep(self.sleep_disabled)
 
-# class StreamersHandler:
+    @staticmethod
+    def from_conf(conf_stream, conf_log, conf_broker, conf_cache):
+        logger = Logger.from_conf(conf_stream.name, conf_log)
+        cache = Cache.from_conf(
+            f"{conf_stream.name}.redis.cache", conf_log=conf_log,
+            conf_cache=conf_cache)
+        producer = Producer.from_conf(
+            f"{conf_stream.name}.kafka.producer", conf_log=conf_log,
+            conf_broker=conf_broker)
+        return Streamer(
+            logger = logger,
+            producer = producer,
+            cache = cache,
+            csv_file_path = conf_stream.file,
+            cache_key = conf_stream.status_key,
+            producer_topic = conf_stream.topic,
+            messages_per_second = conf_stream.messages_per_second,
+            sleep_disabled = conf_stream.sleep_disabled
+        )
+
+class StreamersManager:
     # # TODO: handle multiple streamers in multithreading/processing
     # # TODO: disable all streamers
     # # TODO: enable all streamers
     # pass
+    def __init__(
+        self,
+        logger: Logger
+    ):
+        self._logger = logger
+        self._streamers = []
+        self._threads = []
+
+    def add_streamer(self, streamer: Streamer):
+        self._streamers.append(streamer)
+
+    def start_all(self):
+        self.enable_all()
+        for streamer in self._streamers:
+            thread = Thread(target=streamer.stream)
+            thread.start()
+            self._threads.append(thread)
+
+    def enable_all(self):
+        for streamer in self._streamers:
+            streamer.enable()
+
+    def disable_all(self):
+        for streamer in self._streamers:
+            streamer.disable()
+
+    def interrupt_all(self):
+        for streamer in self._streamers:
+            streamer.interrupt()
+        for thread in self._threads:
+            thread.join()
+        self._threads = []
+
+    @staticmethod
+    def from_conf(conf_streamers, conf_broker, conf_cache, conf_logs):
+        manager = StreamersManager(
+            logger=Logger.from_conf("streamer.manager", conf_logs))
+        for stream in conf_streamers:
+            streamer = Streamer.from_conf(
+                conf_stream = stream,
+                conf_log = conf_logs,
+                conf_broker = conf_broker,
+                conf_cache = conf_cache)
+            manager.add_streamer(streamer)
+        return manager
+
