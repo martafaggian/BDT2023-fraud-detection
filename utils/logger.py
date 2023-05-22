@@ -302,7 +302,7 @@ class Logger:
         self.debug_logger.log(message)
 
     @staticmethod
-    def get_logger_from_conf(name:str, conf: Dict[str, str]) -> Logger:
+    def from_conf(name:str, conf: Dict[str, str]) -> Logger:
         """
         Gets a logger object from a configuration dictionary that specifies the
         directory and file names for each level.

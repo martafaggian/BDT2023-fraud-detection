@@ -45,8 +45,8 @@ class Cache:
         return self._cache.get(key)
 
     @staticmethod
-    def get_cache_from_conf(logger_name, conf_logger, conf_cache):
-        logger = Logger.get_logger_from_conf(logger_name, conf_logger)
+    def from_conf(name, conf_cache, conf_log):
+        logger = Logger.from_conf(name, conf_log)
         return Cache(
             logger=logger,
             host=conf_cache.host,

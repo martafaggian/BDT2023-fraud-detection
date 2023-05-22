@@ -1,3 +1,4 @@
+from __future__ import annotations
 import json
 from abc import ABC, abstractmethod
 from kafka import KafkaProducer, KafkaConsumer
@@ -71,6 +72,14 @@ class Producer(Broker):
             self.set_disconnected()
             raise
 
+    @staticmethod
+    def from_conf(name, conf_broker, conf_log):
+        return Producer(
+            logger = Logger.from_conf(name, conf_log),
+            host = conf_broker.host,
+            port = conf_broker.port
+        )
+
 class Consumer(Broker, ABC):
     def __init__(self, host, port, topic, logger):
         super().__init__(host=host, port=port, logger=logger)
@@ -97,6 +106,6 @@ class ConsumerPrint(Consumer):
     def retrieve(self):
         if self.is_connected():
             for message in self._broker:
-                print(message.value.decode('utf-8'))
+                print(f'{message.topic}: {message.value.decode("utf-8")}')
         else:
             self._logger.error('Consumer is not connected. Connect first!')
