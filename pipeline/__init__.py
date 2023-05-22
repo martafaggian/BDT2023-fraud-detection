@@ -1,3 +1,4 @@
-__all__ = ['broker']
+__all__ = ['broker', 'streamer']
 
-from .broker import Consumer, Producer
+from .broker import ConsumerPrint, Producer, NotConnectedException
+from .streamer import Streamer
