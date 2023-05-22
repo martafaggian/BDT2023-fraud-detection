@@ -44,3 +44,12 @@ class Cache:
         self.check_connected()
         return self._cache.get(key)
 
+    @staticmethod
+    def get_cache_from_conf(logger_name, conf_logger, conf_cache):
+        logger = Logger.get_logger_from_conf(logger_name, conf_logger)
+        return Cache(
+            logger=logger,
+            host=conf_cache.host,
+            port=conf_cache.port,
+            db=conf_cache.db
+        )
