@@ -81,15 +81,14 @@ class Producer(Broker):
         )
 
 class Consumer(Broker, ABC):
-    def __init__(self, host, port, topic, logger):
+    def __init__(self, host, port, logger):
         super().__init__(host=host, port=port, logger=logger)
-        self._topic = topic
         self.connect()
 
     def connect(self):
         try:
             self._broker =  KafkaConsumer(
-                self._topic, bootstrap_servers=f'{self._host}:{self._port}')
+                bootstrap_servers=f'{self._host}:{self._port}')
             self.set_connected()
         except NoBrokersAvailable as e:
             self.set_disconnected()
@@ -97,6 +96,9 @@ class Consumer(Broker, ABC):
                 self._logger,
                 f'No broker available at {self._host}:{self._port}'
             ) from e
+
+    def subscribe(self, topics):
+        self._broker.subscribe(topics)
 
     @abstractmethod
     def retrieve(self):
