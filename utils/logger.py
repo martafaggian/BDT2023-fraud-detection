@@ -41,8 +41,18 @@ from __future__ import annotations
 import os
 import sys
 import logging
+from enum import Enum
 from typing import Dict
 import _io
+
+class Colors:
+    WHITE = '\033[1m\033[37m'
+    BOLD_CYAN = '\033[1m\033[36m'
+    BOLD_ORANGE = '\033[1m\033[33m'
+    BOLD_RED = '\033[1m\033[31m'
+    BOLD_GREEN = '\033[1m\033[32m'
+    BOLD_HIGHLIGHT_RED = '\033[1m\033[41m'
+    RESET = '\033[0m'
 
 class BaseLogger:
     """
@@ -62,10 +72,12 @@ class BaseLogger:
         name: str,
         level: int,
         file_name: str,
-        stream: _io.TextIOWrapper
+        stream: _io.TextIOWrapper,
+        color: Colors = Colors.WHITE
     ):
         # Create logger object with name and level
         self.level = level
+        self.color = color
         self.logger = logging.getLogger(name)
         self.logger.setLevel(level)
 
@@ -81,7 +93,7 @@ class BaseLogger:
         stream_handler.setLevel(level)
 
         # Add timestamps and other information to messages
-        formatter = logging.Formatter("%(asctime)s - %(name)s >>> %(message)s")
+        formatter = logging.Formatter(f"%(asctime)s - {self.color}%(name)s{Colors.RESET} >>> %(message)s")
         file_handler.setFormatter(formatter)
         stream_handler.setFormatter(formatter)
 
@@ -109,7 +121,8 @@ class InfoLogger(BaseLogger, logging.Logger):
     :type outfile:  str
     """
     def __init__(self, name: str, outfile: str = "info.log"):
-        super().__init__(f'{name}.INFO', logging.INFO, outfile, sys.stdout)
+        super().__init__(f'{name}.INFO', logging.INFO, outfile,
+                         sys.stdout, Colors.BOLD_CYAN)
 
 class WarningLogger(BaseLogger, logging.Logger):
     """
@@ -122,7 +135,8 @@ class WarningLogger(BaseLogger, logging.Logger):
     :type outfile:  str
     """
     def __init__(self, name, outfile="warning.log"):
-        super().__init__(f'{name}.WARNING', logging.WARNING, outfile, sys.stdout)
+        super().__init__(f'{name}.WARNING', logging.WARNING, outfile,
+                         sys.stdout, Colors.BOLD_ORANGE)
 
 class ErrorLogger(BaseLogger, logging.Logger):
     """
@@ -135,7 +149,8 @@ class ErrorLogger(BaseLogger, logging.Logger):
     :type outfile:  str
     """
     def __init__(self, name, outfile="error.log"):
-        super().__init__(f'{name}.ERROR', logging.ERROR, outfile, sys.stderr)
+        super().__init__(f'{name}.ERROR', logging.ERROR, outfile,
+                         sys.stderr, Colors.BOLD_RED)
 
 class CriticalLogger(BaseLogger, logging.Logger):
     """
@@ -148,7 +163,8 @@ class CriticalLogger(BaseLogger, logging.Logger):
     :type outfile:  str
     """
     def __init__(self, name, outfile="critical.log"):
-        super().__init__(f'{name}.CRITICAL', logging.CRITICAL, outfile, sys.stderr)
+        super().__init__(f'{name}.CRITICAL', logging.CRITICAL, outfile,
+                         sys.stderr, Colors.BOLD_HIGHLIGHT_RED)
 
 class DebugLogger(BaseLogger, logging.Logger):
     """
@@ -161,7 +177,8 @@ class DebugLogger(BaseLogger, logging.Logger):
     :type outfile:  str
     """
     def __init__(self, name, outfile="debug.log"):
-        super().__init__(f'{name}.DEBUG', logging.DEBUG, outfile, sys.stdout)
+        super().__init__(f'{name}.DEBUG', logging.DEBUG, outfile,
+                         sys.stdout, Colors.BOLD_GREEN)
 
 class Logger:
     """
