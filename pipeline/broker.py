@@ -3,16 +3,20 @@ from abc import ABC, abstractmethod
 from kafka import KafkaProducer, KafkaConsumer
 from kafka.errors import NoBrokersAvailable
 from utils import Logger
-from abc import ABC, abstractmethod
 
-class NotConnectedException(Exception):
+class BrokerNotConnectedException(Exception):
     def __init__(self, logger, message, *args):
         super().__init__(message)
         self.args = args
         logger.error(message)
 
 class Broker(ABC):
-    def __init__(self, host, port, logger):
+    def __init__(
+        self,
+        logger: Logger,
+        host: str = 'localhost',
+        port: int = 6379
+    ):
         self._host = host
         self._port = port
         self._logger = logger
@@ -31,7 +35,7 @@ class Broker(ABC):
 
     def check_connected(self):
         if not self.is_connected():
-            raise NotConnectedException(
+            raise BrokerNotConnectedException(
                 self._logger,
                 f'Producer is not connected at {self._host}:{self._port}.')
 
@@ -41,7 +45,7 @@ class Broker(ABC):
 
 class Producer(Broker):
     def __init__(self, host, port, logger):
-        super().__init__(host, port, logger)
+        super().__init__(host=host, port=port, logger=logger)
         self.connect()
 
     def connect(self):
@@ -53,7 +57,7 @@ class Producer(Broker):
             self.set_connected()
         except NoBrokersAvailable as e:
             self.set_disconnected()
-            raise NotConnectedException(
+            raise BrokerNotConnectedException(
                 self._logger,
                 f'No broker available at {self._host}:{self._port}'
             ) from e
@@ -63,13 +67,13 @@ class Producer(Broker):
             self.check_connected()
             self._broker.send(topic, message)
             # TODO: check response
-        except NotConnectedException as e:
+        except BrokerNotConnectedException as e:
             self.set_disconnected()
             raise
 
 class Consumer(Broker, ABC):
     def __init__(self, host, port, topic, logger):
-        super().__init__(host, port, logger)
+        super().__init__(host=host, port=port, logger=logger)
         self._topic = topic
         self.connect()
 
@@ -80,7 +84,7 @@ class Consumer(Broker, ABC):
             self.set_connected()
         except NoBrokersAvailable as e:
             self.set_disconnected()
-            raise NotConnectedException(
+            raise BrokerNotConnectedException(
                 self._logger,
                 f'No broker available at {self._host}:{self._port}'
             ) from e

@@ -1,19 +1,18 @@
 from __future__ import annotations
-import os
 import csv
-import redis
 import time
 from enum import IntEnum
 #
 from utils import Logger
-from pipeline import Producer, NotConnectedException
+from pipeline.cache import Cache
+from pipeline.broker import Producer
 
 class StreamerStatus(IntEnum):
     DISABLED = 0
     ENABLED = 1
     INTERRUPTED = -1
 
-class NotEnabledException(Exception):
+class StreamerNotEnabledException(Exception):
     def __init__(self, logger, message, *args):
         super().__init__(message)
         self.args = args
@@ -24,9 +23,9 @@ class Streamer:
         self,
         producer: Producer,
         logger: Logger,
-        redis_instance: redis.client.Redis,
+        cache: Cache,
         csv_file_path: str,
-        redis_key: str = "streamer_active",
+        cache_key: str = "streamer_active",
         producer_topic: str = "custom_source",
         init_status: StreamerStatus = StreamerStatus.ENABLED,
         messages_per_second: int = 1,
@@ -35,20 +34,19 @@ class Streamer:
         self.logger = logger
         self.file_path = csv_file_path
         self.producer = producer
-        self.cache = redis_instance
-        self.cache_key = redis_key
+        self.cache = cache
+        self.cache_key = cache_key
         self.topic = producer_topic
         self.mps = messages_per_second
         self.sleep_disabled = sleep_disabled
-
-    def cache_connected(self):
-        return self.cache.ping()
+        self.set_status(init_status)
+        self.print_status()
 
     def get_status(self):
-        return int(self.cache.get(self.cache_key))
+        return int(self.cache.read(self.cache_key))
 
     def set_status(self, status):
-        self.cache.set(self.cache_key, int(status))
+        self.cache.write(self.cache_key, int(status))
 
     def print_status(self):
         status = self.get_status()
@@ -62,11 +60,8 @@ class Streamer:
             self.logger.error(f"{self.cache_key} stream unknown status.")
 
     def enable(self):
-        if self.cache_connected():
-            self.set_status(StreamerStatus.ENABLED)
-            self.print_status()
-        else:
-            self.logger.error('Redis is not connected')
+        self.set_status(StreamerStatus.ENABLED)
+        self.print_status()
 
     def disable(self):
         self.set_status(StreamerStatus.DISABLED)
@@ -93,14 +88,13 @@ class Streamer:
                     reader = csv.DictReader(f)
                     for row in reader:
                         if not self.is_enabled():
-                            raise NotEnabledException(self.logger, 'Streamer is disabled.')
-                        self.producer.check_connected()
+                            raise StreamerNotEnabledException(self.logger, 'Streamer is disabled.')
                         self.producer.send(row, topic=self.topic)
                         time.sleep(float(1/self.mps))
                         # TODO: check sending result
                         # TODO: save on redis last sent row and resume
                         # from there
-            except NotEnabledException as e:
+            except StreamerNotEnabledException as e:
                 self.logger.info(f"{self.cache_key} stream disabled.")
                 self.logger.info(f"Sleeping {self.sleep_disabled} seconds...")
                 time.sleep(self.sleep_disabled)
