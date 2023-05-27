@@ -92,7 +92,6 @@ class Streamer:
                             raise StreamerNotEnabledException(self.logger, 'Streamer is disabled.')
                         self.producer.send(row, topic=self.topic)
                         time.sleep(float(1/self.mps))
-                        # TODO: check sending result
                         # TODO: save on redis last sent row and resume
                         # from there
             except StreamerNotEnabledException as e:
@@ -140,8 +139,9 @@ class StreamersManager:
         self.enable_all()
         for streamer in self._streamers:
             thread = Thread(target=streamer.stream)
-            thread.start()
             self._threads.append(thread)
+        for thread in self._threads:
+            thread.start()
 
     def enable_all(self):
         for streamer in self._streamers:

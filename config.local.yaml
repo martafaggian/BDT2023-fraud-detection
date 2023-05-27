@@ -1,28 +1,25 @@
 cassandra:
-  host: cassandra
-  #host: localhost
+  host: localhost
   port: 9042
 
 kafka:
-  host: kafka
-  #host: localhost
+  host: localhost
   port: 9092
 
 redis:
-  host: redis
-  #host: localhost
+  host: localhost
   port: 6379
   db: 0
 
 streamers:
   - name: streamer1
-    file: ./data/synthetic_financial_datasets.csv
+    file: ./data/sources/synthetic_financial_datasets.csv
     topic: streamer1
     status_key: streamer1.active
     messages_per_second: 1
     sleep_disabled: 10
   - name: streamer2
-    file: ./data/synthetic_financial_datasets_short.csv
+    file: ./data/sources/synthetic_financial_datasets_short.csv
     topic: streamer2
     status_key: streamer2.active
     messages_per_second: 2

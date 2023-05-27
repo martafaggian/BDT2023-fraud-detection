@@ -1,5 +1,7 @@
 from __future__ import annotations
 import json
+import time
+from datetime import datetime
 from abc import ABC, abstractmethod
 from kafka import KafkaProducer, KafkaConsumer
 from kafka.errors import NoBrokersAvailable
@@ -49,7 +51,7 @@ class Producer(Broker):
         super().__init__(host=host, port=port, logger=logger)
         self.connect()
 
-    def connect(self):
+    def connect(self, retry_n=10, retry_sleep=5):
         try:
             self._broker =  KafkaProducer(
                 bootstrap_servers=f'{self._host}:{self._port}',
@@ -58,16 +60,27 @@ class Producer(Broker):
             self.set_connected()
         except NoBrokersAvailable as e:
             self.set_disconnected()
-            raise BrokerNotConnectedException(
-                self._logger,
-                f'No broker available at {self._host}:{self._port}'
-            ) from e
+            if retry_n > 0:
+                self._logger.warning(f"No broker available at {self._host}:{self._port}.")
+                self._logger.warning(f"Retrying {retry_n} time(s).")
+                time.sleep(retry_sleep)
+                self.connect(retry_n=retry_n-1, retry_sleep=retry_sleep)
+            else:
+                raise BrokerNotConnectedException(
+                    self._logger,
+                    f'No broker available at {self._host}:{self._port}'
+                ) from e
 
     def send(self, message, topic):
         try:
             self.check_connected()
-            self._broker.send(topic, message)
+            future = self._broker.send(topic, message)
             # TODO: check response
+            try:
+                rec = future.get(timeout=10)
+                # self._logger.info(f"Message sent successfully to {rec.topic} partition {rec.partition} at offset {rec.offset}")
+            except Exception as e:
+                self._logger.error(f"Error sending message to {topic}: {e}")
         except BrokerNotConnectedException as e:
             self.set_disconnected()
             raise
@@ -108,6 +121,6 @@ class ConsumerPrint(Consumer):
     def retrieve(self):
         if self.is_connected():
             for message in self._broker:
-                print(f'{message.topic}: {message.value.decode("utf-8")}')
+                print(f'{datetime.now()} {message.topic}: {message.value.decode("utf-8")}')
         else:
             self._logger.error('Consumer is not connected. Connect first!')
