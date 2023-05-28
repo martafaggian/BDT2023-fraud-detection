@@ -1,18 +1,66 @@
 version: '3.1'
+
 services:
-  cassandra:
+
+  # === Cassandra Cluster === #
+  cassandra-1:
     image: cassandra:latest
-    container_name: cassandra
+    container_name: cassandra-1
+    restart: always
+    environment:
+      - CASSANDRA_SEEDS=cassandra-1,cassandra-2,cassandra-3
+      - CASSANDRA_CLUSTER_NAME=cassandra-cluster
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_DC=dc1
+      - CASSANDRA_RACK=rack1
+      - CASSANDRA_AUTO_BOOTSTRAP=true
+    volumes:
+      - ./data/cassandra-1:/var/lib/cassandra
     ports:
       - "9042:9042"
-    environment:
-      - "MAX_HEAP_SIZE=256M"
-      - "HEAP_NEWSIZE=128M"
-    restart: always
-    volumes:
-      - ./data/cassandra:/var/lib/cassandra
     networks:
-      - streamer-net
+      db-net:
+        ipv4_address: 172.28.0.2
+
+  cassandra-2:
+    image: cassandra:latest
+    container_name: cassandra-2
+    restart: always
+    environment:
+      - CASSANDRA_SEEDS=cassandra-1,cassandra-2,cassandra-3
+      - CASSANDRA_CLUSTER_NAME=cassandra-cluster
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_DC=dc1
+      - CASSANDRA_RACK=rack1
+      - CASSANDRA_AUTO_BOOTSTRAP=true
+    volumes:
+      - ./data/cassandra-2:/var/lib/cassandra
+    ports:
+      - "9043:9042"
+    networks:
+      db-net:
+        ipv4_address: 172.28.0.3
+
+  cassandra-3:
+    image: cassandra:latest
+    container_name: cassandra-3
+    restart: always
+    environment:
+      - CASSANDRA_SEEDS=cassandra-1,cassandra-2,cassandra-3
+      - CASSANDRA_CLUSTER_NAME=cassandra-cluster
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_DC=dc1
+      - CASSANDRA_RACK=rack1
+      - CASSANDRA_AUTO_BOOTSTRAP=true
+    ports:
+      - "9044:9042"
+    volumes:
+      - ./data/cassandra-3:/var/lib/cassandra
+    networks:
+      db-net:
+        ipv4_address: 172.28.0.4
+
+  # === Redis === #
   redis:
     image: redis:7.0
     container_name: redis
@@ -25,6 +73,8 @@ services:
       NAME: redis
     networks:
       - streamer-net
+
+  # === Kafka === #
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper
@@ -64,7 +114,38 @@ services:
       #- ./data/kui/config.yaml:/etc/kafkaui/dynamic_config.yaml
     #networks:
       #- streamer-net
+  # === Flink === #
+  jobmanager:
+    image: ${FLINK_DOCKER_IMAGE_NAME:-flink}
+    expose:
+      - "6123"
+    ports:
+      - "8081:8081"
+    command: jobmanager
+    environment:
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+
+  taskmanager:
+    image: ${FLINK_DOCKER_IMAGE_NAME:-flink}
+    expose:
+      - "6121"
+      - "6122"
+    depends_on:
+      - jobmanager
+    command: taskmanager
+    links:
+      - "jobmanager:jobmanager"
+    environment:
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+      - TASK_MANAGER_NUMBER_OF_TASK_SLOTS=4
+
 networks:
   streamer-net:
     name: streamer-net
     driver: bridge
+  db-net:
+    name: db-net
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
