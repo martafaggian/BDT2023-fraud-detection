@@ -5,7 +5,7 @@ from datetime import datetime
 from abc import ABC, abstractmethod
 from kafka import KafkaProducer, KafkaConsumer
 from kafka.errors import NoBrokersAvailable
-from utils import Logger
+from app.utils import Logger
 
 class BrokerNotConnectedException(Exception):
     def __init__(self, logger, message, *args):

@@ -1,5 +1,4 @@
-__all__ = ['broker', 'streamer', 'cache']
+__all__ = ['broker', 'cache']
 
 from .broker import ConsumerPrint, Producer
-from .streamer import Streamer, StreamersManager
 from .cache import Cache

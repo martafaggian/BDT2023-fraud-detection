@@ -1,5 +1,5 @@
 from redis import Redis
-from utils import Logger
+from app.utils import Logger
 
 class CacheNotConnectedException(Exception):
     def __init__(self, logger, message, *args):
