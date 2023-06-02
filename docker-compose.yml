@@ -14,6 +14,7 @@ services:
       - CASSANDRA_AUTO_BOOTSTRAP=true
     volumes:
       - ./data/cassandra-1:/var/lib/cassandra
+      - ./conf/cassandra-1.yaml:/etc/cassandra/cassandra.yaml
     ports:
       - "9042:9042"
     networks:
@@ -33,6 +34,7 @@ services:
       - CASSANDRA_AUTO_BOOTSTRAP=true
     volumes:
       - ./data/cassandra-2:/var/lib/cassandra
+      - ./conf/cassandra-2.yaml:/etc/cassandra/cassandra.yaml
     ports:
       - "9043:9042"
     networks:
@@ -54,6 +56,7 @@ services:
       - "9044:9042"
     volumes:
       - ./data/cassandra-3:/var/lib/cassandra
+      - ./conf/cassandra-3.yaml:/etc/cassandra/cassandra.yaml
     networks:
       db-net:
         ipv4_address: 172.28.0.4
@@ -128,6 +131,7 @@ services:
       context: .
       dockerfile: app/parser/Dockerfile
     container_name: parser-jobmanager
+    restart: always
     #expose:
       #- "6123"
     ports:
@@ -148,6 +152,7 @@ services:
       context: .
       dockerfile: app/parser/Dockerfile
     container_name: parser-taskmanager
+    restart: always
     #expose:
       #- "6121"
       #- "6122"
@@ -173,6 +178,7 @@ services:
       context: .
       dockerfile: app/stream/Dockerfile
     container_name: streamer
+    restart: always
     depends_on:
       - redis
       - kafka
