@@ -129,8 +129,8 @@ services:
   jobmanager:
     build:
       context: .
-      dockerfile: app/parser/Dockerfile
-    container_name: parser-jobmanager
+      dockerfile: app/pipeline/Dockerfile
+    container_name: pipeline-jobmanager
     restart: always
     #expose:
       #- "6123"
@@ -138,7 +138,8 @@ services:
       - "8081:8081"
     command: jobmanager
     volumes:
-      - ./app/parser:/app/parser
+      - ./app/pipeline:/env/app/pipeline
+      - ./logs:/env/app/logs
     environment:
       - JOB_MANAGER_RPC_ADDRESS=jobmanager
     networks:
@@ -150,8 +151,8 @@ services:
   taskmanager:
     build:
       context: .
-      dockerfile: app/parser/Dockerfile
-    container_name: parser-taskmanager
+      dockerfile: app/pipeline/Dockerfile
+    container_name: pipeline-taskmanager
     restart: always
     #expose:
       #- "6121"

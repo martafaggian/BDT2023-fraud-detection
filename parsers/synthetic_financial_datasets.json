@@ -1,0 +1,13 @@
+{
+    "step": "INT",
+    "type": "STRING",
+    "amount": "DOUBLE",
+    "nameOrig": "STRING",
+    "oldbalanceOrg": "DOUBLE",
+    "newbalanceOrig": "DOUBLE",
+    "nameDest": "STRING",
+    "oldbalanceDest": "DOUBLE",
+    "newbalanceDest": "DOUBLE",
+    "isFraud": "BOOLEAN",
+    "isFlaggedFraud": "BOOLEAN"
+}

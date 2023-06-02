@@ -16,3 +16,14 @@ RUN pip3 install /apache-flink-libraries*.tar.gz && pip3 install /apache-flink*.
 RUN wget -P /opt/flink/lib/ https://repo.maven.apache.org/maven2/org/apache/flink/flink-json/${FLINK_VERSION}/flink-json-${FLINK_VERSION}.jar; \
     wget -P /opt/flink/lib/ https://repo.maven.apache.org/maven2/org/apache/flink/flink-sql-connector-kafka/${FLINK_VERSION}/flink-sql-connector-kafka-${FLINK_VERSION}.jar; \
     wget -P /opt/flink/lib/ https://repo.maven.apache.org/maven2/org/apache/flink/flink-connector-cassandra_2.12/3.1.0-1.17/flink-connector-cassandra_2.12-3.1.0-1.17.jar
+
+WORKDIR /env
+COPY requirements.txt .
+RUN pip3 install --no-cache-dir -r requirements.txt
+COPY app/ /env/app/
+COPY parsers/ /env/app/parsers/
+COPY setup.py .
+RUN pip3 install -e .
+
+WORKDIR /env/app
+COPY config.yaml .

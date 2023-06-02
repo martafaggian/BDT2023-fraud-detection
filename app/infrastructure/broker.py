@@ -5,7 +5,10 @@ from datetime import datetime
 from abc import ABC, abstractmethod
 from kafka import KafkaProducer, KafkaConsumer
 from kafka.errors import NoBrokersAvailable
+from pyflink.datastream.connectors import FlinkKafkaConsumer, FlinkKafkaProducer
+from pyflink.datastream.formats.json import JsonRowDeserializationSchema, JsonRowSerializationSchema
 from app.utils import Logger
+from app.pipeline import Parser
 
 class BrokerNotConnectedException(Exception):
     def __init__(self, logger, message, *args):
@@ -124,3 +127,75 @@ class ConsumerPrint(Consumer):
                 print(f'{datetime.now()} {message.topic}: {message.value.decode("utf-8")}')
         else:
             self._logger.error('Consumer is not connected. Connect first!')
+
+class ConsumerFlink(Broker):
+    def __init__(self, host, port, logger, type_info, topics):
+        super().__init__(host=host, port=port, logger=logger)
+        self._type_info = type_info
+        self._topics = topics
+        self._deserializer = JsonRowDeserializationSchema \
+            .builder() \
+            .type_info(type_info=self._type_info)\
+            .build()
+        # self._deserializer = SimpleStringSchema()
+        self._props = {
+            'bootstrap.servers': f'{self._host}:{self._port}',
+        }
+        self._consumer = FlinkKafkaConsumer(
+            topics=self._topics,
+            deserialization_schema=self._deserializer,
+            properties=self._props
+        )
+
+    def connect(self):
+        self._logger.error('This object is intended to use as Flink Source!')
+
+    def get_consumer(self):
+        return self._consumer
+
+    @staticmethod
+    def from_conf(name, conf_broker, conf_log, conf_parser):
+        parser = Parser(conf_parser.source)
+        return ConsumerFlink(
+            logger = Logger.from_conf(name, conf_log),
+            host = conf_broker.host,
+            port = conf_broker.port,
+            type_info = parser.get_types(),
+            topics=list(conf_parser.topics)
+        )
+
+class ProducerFlink(Broker):
+    def __init__(self, host, port, logger, type_info, topic):
+        super().__init__(host=host, port=port, logger=logger)
+        self._type_info = type_info
+        self._topic = topic
+        self._serializer = JsonRowSerializationSchema \
+            .builder() \
+            .with_type_info(type_info=self._type_info)\
+            .build()
+        # self._serializer = SimpleStringSchema()
+        self._props = {
+            'bootstrap.servers': f'{self._host}:{self._port}',
+        }
+        self._producer = FlinkKafkaProducer(
+            topic=self._topic,
+            serialization_schema=self._serializer,
+            producer_config=self._props
+        )
+
+    def connect(self):
+        self._logger.error('This object is intended to use as Flink Source!')
+
+    def get_producer(self):
+        return self._producer
+
+    @staticmethod
+    def from_conf(name, conf_broker, conf_log, conf_parser):
+        parser = Parser(conf_parser.target)
+        return ProducerFlink(
+            logger = Logger.from_conf(name, conf_log),
+            host = conf_broker.host,
+            port = conf_broker.port,
+            type_info = parser.get_types(),
+            topic=conf_parser.sink_topic
+        )

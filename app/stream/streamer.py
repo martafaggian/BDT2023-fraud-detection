@@ -3,7 +3,7 @@ import csv
 import time
 from enum import IntEnum
 #
-from app.pipeline import Cache, Producer
+from app.infrastructure import Cache, Producer
 from app.utils import Logger
 
 class StreamerStatus(IntEnum):

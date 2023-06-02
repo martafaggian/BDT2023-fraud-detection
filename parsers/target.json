@@ -1,0 +1,21 @@
+{
+    "transaction_id": "STRING",
+    "timestamp": "STRING",
+    "user_id": "STRING",
+    "account_id": "STRING",
+    "bank_id": "STRING",
+    "balance_before": "DOUBLE",
+    "balance_after": "DOUBLE",
+    "account_type": "STRING",
+    "counterparty_account_id": "STRING",
+    "counterparty_isinternal": "BOOLEAN",
+    "counterparty_name": "STRING",
+    "counterparty_type": "STRING",
+    "amount": "DOUBLE",
+    "direction": "STRING",
+    "status": "STRING",
+    "source_location_longitude": "FLOAT",
+    "source_location_latitude": "FLOAT",
+    "is_fraud": "BOOLEAN",
+    "fraud_confidence": "FLOAT"
+}

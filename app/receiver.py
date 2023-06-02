@@ -1,6 +1,6 @@
 import argparse
 from omegaconf import OmegaConf
-from pipeline import ConsumerPrint
+from infrastructure import ConsumerPrint
 from utils import Logger
 
 def main(conf):
@@ -8,7 +8,8 @@ def main(conf):
     consumer = ConsumerPrint(host=conf.kafka.host,
                              port=conf.kafka.port,
                              logger=logger)
-    consumer.subscribe([stream.topic for stream in conf.streamers])
+    # consumer.subscribe([stream.topic for stream in conf.streamers])
+    consumer.subscribe("parsed-synthetic_financial_datasets")
     while True:
         consumer.retrieve()
 

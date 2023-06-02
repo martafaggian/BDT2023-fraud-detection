@@ -44,7 +44,7 @@ from pyflink.datastream import StreamExecutionEnvironment
 from pyflink.datastream.connectors import FlinkKafkaConsumer
 from pyflink.datastream.connectors.cassandra import CassandraSink
 from pyflink.common.serialization import SimpleStringSchema
-from pyflink.datastream.formats.json import JsonRowDeserializationSchema
+from pyflink.datastream.formats.json import JsonRowDeserializationSchema, JsonRowSerializationSchema
 from pyflink.common.typeinfo import Types
 
 env = StreamExecutionEnvironment.get_execution_environment()
@@ -82,10 +82,15 @@ cassandra_props = {
 }
 
 def is_fraud(record):
-    if float(record['amount']) > 10000:
-        record['isFraud'] = 1
-    else:
-        record['isFraud'] = 0
+    # if float(record['amount']) > 10000:
+        # record['isFraud'] = 1
+    # else:
+        # record['isFraud'] = 0
+    # import pdb
+    # pdb.set_trace()
+    serializer = JsonRowSerializationSchema.builder().with_type_info(type_info=type_info).build()
+    import pdb
+    pdb.set_trace()
     return record
 
 create_db = """
@@ -113,10 +118,11 @@ CREATE TABLE IF NOT EXISTS fraud_detection.transactions (
 insert_query = """
 INSERT INTO fraud_detection.transactions (id, step, type, amount, nameOrig, oldbalanceOrg, newbalanceOrig, nameDest, oldbalanceDest, newbalanceDest, isFraud, isFlaggedFraud) VALUES (uuid(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
 
-# ds = ds.map(is_fraud)
-cassandra_sink = CassandraSink.add_sink(ds). \
-    set_query(insert_query). \
-    set_host('cassandra-1'). \
-    build()
+ds = ds.map(is_fraud)
+ds.print()
+# cassandra_sink = CassandraSink.add_sink(ds). \
+    # set_query(insert_query). \
+    # set_host('cassandra-1'). \
+    # build()
 
 env.execute("Kafka to Cassandra")

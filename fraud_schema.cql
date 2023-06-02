@@ -114,59 +114,59 @@ CREATE TABLE fraud_detection.users(
 );
 
 -- ################## INSERTS ################## --
-
-insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
-                          bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
-                          counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
-values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
-        'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
-insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
-                          bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
-                          counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
-values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
-        'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
-insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
-                          bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
-                          counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
-values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
-        'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
-insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
-                          bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
-                          counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
-values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
-        'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
-insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
-                          bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
-                          counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
-values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
-        'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
-insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
-                          bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
-                          counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
-values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
-        'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
-insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
-                          bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
-                          counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
-values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
-        'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
-insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
-                          bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
-                          counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
-values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
-        'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
-insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
-                          bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
-                          counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
-values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
-        'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
-insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
-                          bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
-                          counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
-values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
-        'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
-insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
-                          bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
-                          counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
-values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
-        'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
+--
+-- insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
+--                           bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
+--                           counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
+-- values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
+--         'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
+-- insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
+--                           bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
+--                           counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
+-- values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
+--         'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
+-- insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
+--                           bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
+--                           counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
+-- values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
+--         'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
+-- insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
+--                           bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
+--                           counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
+-- values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
+--         'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
+-- insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
+--                           bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
+--                           counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
+-- values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
+--         'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
+-- insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
+--                           bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
+--                           counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
+-- values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
+--         'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
+-- insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
+--                           bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
+--                           counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
+-- values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
+--         'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
+-- insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
+--                           bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
+--                           counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
+-- values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
+--         'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
+-- insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
+--                           bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
+--                           counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
+-- values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
+--         'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
+-- insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
+--                           bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
+--                           counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
+-- values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
+--         'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
+-- insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
+--                           bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
+--                           counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
+-- values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
+--         'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
