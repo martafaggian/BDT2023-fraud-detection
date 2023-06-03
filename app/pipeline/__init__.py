@@ -1,3 +1,3 @@
-__all__ = ['parser']
+__all__ = ['main']
 
-from .parser import Parser
+from .main import Parser

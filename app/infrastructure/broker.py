@@ -8,7 +8,6 @@ from kafka.errors import NoBrokersAvailable
 from pyflink.datastream.connectors import FlinkKafkaConsumer, FlinkKafkaProducer
 from pyflink.datastream.formats.json import JsonRowDeserializationSchema, JsonRowSerializationSchema
 from app.utils import Logger
-from app.pipeline import Parser
 
 class BrokerNotConnectedException(Exception):
     def __init__(self, logger, message, *args):
@@ -154,8 +153,7 @@ class ConsumerFlink(Broker):
         return self._consumer
 
     @staticmethod
-    def from_conf(name, conf_broker, conf_log, conf_parser):
-        types = Parser.get_types(conf_parser.source.file)
+    def from_conf(name, conf_broker, conf_log, conf_parser, types):
         return ConsumerFlink(
             logger = Logger.from_conf(name, conf_log),
             host = conf_broker.host,
@@ -190,8 +188,7 @@ class ProducerFlink(Broker):
         return self._producer
 
     @staticmethod
-    def from_conf(name, conf_broker, conf_log, conf_parser):
-        types = Parser.get_types(conf_parser.target.file)
+    def from_conf(name, conf_broker, conf_log, conf_parser, types):
         return ProducerFlink(
             logger = Logger.from_conf(name, conf_log),
             host = conf_broker.host,

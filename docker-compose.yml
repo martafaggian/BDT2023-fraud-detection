@@ -193,6 +193,18 @@ services:
       streamer-net:
         ipv4_address: 172.28.1.7
 
+  # === Grafana === #
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    networks:
+      db-net:
+        ipv4_address: 172.28.0.8
+      streamer-net:
+        ipv4_address: 172.28.1.8
+
 networks:
   streamer-net:
     name: streamer-net

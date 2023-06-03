@@ -97,6 +97,7 @@ class Parser:
 
     @staticmethod
     def from_sfd_to_target(record, conf_cache, conf_logs):
+        # Declaration must be internal due to Flink contraints!
         cache = Cache.from_conf(
             "parser-cache",
             conf_cache,
@@ -118,11 +119,15 @@ class Parser:
         else:
             direction = "outbound"
         #
+        # Fraud detection :)
+        # Pyflink ML should be easy to integrate:
+        # https://nightlies.apache.org/flink/flink-ml-docs-master/docs/try-flink-ml/python/quick-start/
         if record["amount"] > 5000:
             is_fraud = 1
+            fraud_conf = 1.0
         else:
             is_fraud = 0
-        fraud_conf = 1.0
+            fraud_conf = 0.0
         #
         output = Row(
             user_id = account["user_id"],
@@ -157,7 +162,8 @@ def main(conf, cache):
             name=f"flink-{pconf.source.name}",
             conf_broker=conf.kafka,
             conf_log=conf.logs,
-            conf_parser=pconf
+            conf_parser=pconf,
+            types = Parser.get_types(pconf.source.file)
         )
         consumer = source.get_consumer()
         #
