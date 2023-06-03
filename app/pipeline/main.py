@@ -1,17 +1,17 @@
+"""
+NB: flink requires all code in one single file!
+"""
 from __future__ import annotations
+import json
+from enum import Enum
 import pandas as pd
 from omegaconf import OmegaConf
 from pyflink.datastream import StreamExecutionEnvironment
 from pyflink.datastream.connectors.cassandra import CassandraSink
-from app.infrastructure.broker import ConsumerFlink, ProducerFlink
-from app.infrastructure.cache import Cache
-# from parser import Parser
-from pyflink.common.types import Row
-import json
-from enum import Enum
-from app.infrastructure.cache import Cache
 from pyflink.common.typeinfo import Types
 from pyflink.common.types import Row
+from app.infrastructure.broker import ConsumerFlink
+from app.infrastructure.cache import Cache
 
 class SourceTypes(str, Enum):
     SYNTHETIC_FINANCIAL_DATASETS = "synthetic_financial_datasets"
@@ -23,12 +23,13 @@ class Parser:
         source: str,
         target: str,
         source_parser_file_path: str,
-        target_parser_file_path: str
+        target_parser_file_path: str,
     ):
         self._source_types = self.get_types(source_parser_file_path)
         self._target_types = self.get_types(target_parser_file_path)
         self._source = source
         self._target = target
+        self._source = source
         query = None
 
         if self._source == SourceTypes.SYNTHETIC_FINANCIAL_DATASETS and self._target == SourceTypes.TARGET:
