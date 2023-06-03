@@ -76,6 +76,8 @@ services:
     networks:
       streamer-net:
         ipv4_address: 172.28.1.2
+      db-net:
+        ipv4_address: 172.28.0.7
 
   # === Kafka === #
 
@@ -140,6 +142,7 @@ services:
     volumes:
       - ./app/pipeline:/env/app/pipeline
       - ./logs:/env/app/logs
+      - ./data/sources:/env/app/data
     environment:
       - JOB_MANAGER_RPC_ADDRESS=jobmanager
     networks:

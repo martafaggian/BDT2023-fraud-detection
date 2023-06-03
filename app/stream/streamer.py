@@ -28,7 +28,7 @@ class Streamer:
         producer_topic: str = "custom_source",
         messages_per_second: int = 1,
         sleep_disabled: int = 10, # seconds of sleep if disabled to check again
-        init_status: StreamerStatus = StreamerStatus.ENABLED,
+        init_status: StreamerStatus = StreamerStatus.ENABLED
     ):
         self.logger = logger
         self.file_path = csv_file_path

@@ -1,4 +1,12 @@
 from __future__ import annotations
+import pandas as pd
+from omegaconf import OmegaConf
+from pyflink.datastream import StreamExecutionEnvironment
+from pyflink.datastream.connectors.cassandra import CassandraSink
+from app.infrastructure.broker import ConsumerFlink, ProducerFlink
+from app.infrastructure.cache import Cache
+# from parser import Parser
+from pyflink.common.types import Row
 import json
 from enum import Enum
 from app.infrastructure.cache import Cache
@@ -135,3 +143,45 @@ class Parser:
         )
         return output
 
+def write_cache(cache, key, accounts):
+    df = pd.read_csv(accounts)
+    keys = df.pop("account_id")
+    values = df[["bank_id", "user_id", "type"]].to_dict(orient="records")
+    cache.write_multiple(keys, values, is_dict=True)
+
+def main(conf, cache):
+    for pconf in conf.parsers:
+        #
+        source = ConsumerFlink.from_conf(
+            name=f"flink-{pconf.source.name}",
+            conf_broker=conf.kafka,
+            conf_log=conf.logs,
+            conf_parser=pconf
+        )
+        consumer = source.get_consumer()
+        #
+        parser = Parser(
+            source = pconf.source.name,
+            target = pconf.target.name,
+            source_parser_file_path = pconf.source.file,
+            target_parser_file_path = pconf.target.file
+        )
+        #
+        env = StreamExecutionEnvironment.get_execution_environment()
+        ds = env.add_source(consumer)
+        ds = ds.map(lambda x: parser.parse(x, conf.redis, conf.logs), parser._target_types)
+        CassandraSink.add_sink(ds). \
+            set_query(parser.insert). \
+            set_host('cassandra-1'). \
+            build()
+        env.execute(f"Parser {pconf.source.name} -> {pconf.target.name} + AD")
+
+if __name__ == '__main__':
+    conf = OmegaConf.load("config.yaml")
+    cache = Cache.from_conf(
+        "parser-cache",
+        conf.redis,
+        conf.logs
+    )
+    write_cache(cache, conf.cache.accounts_key, conf.cache.accounts)
+    main(conf, cache)

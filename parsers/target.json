@@ -1,6 +1,4 @@
 {
-    "transaction_id": "STRING",
-    "timestamp": "STRING",
     "user_id": "STRING",
     "account_id": "STRING",
     "bank_id": "STRING",
@@ -14,8 +12,7 @@
     "amount": "DOUBLE",
     "direction": "STRING",
     "status": "STRING",
-    "source_location_longitude": "FLOAT",
-    "source_location_latitude": "FLOAT",
+    "source_location": "FLOATTUPLE",
     "is_fraud": "BOOLEAN",
     "fraud_confidence": "FLOAT"
 }

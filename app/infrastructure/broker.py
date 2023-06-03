@@ -155,13 +155,13 @@ class ConsumerFlink(Broker):
 
     @staticmethod
     def from_conf(name, conf_broker, conf_log, conf_parser):
-        parser = Parser(conf_parser.source)
+        types = Parser.get_types(conf_parser.source.file)
         return ConsumerFlink(
             logger = Logger.from_conf(name, conf_log),
             host = conf_broker.host,
             port = conf_broker.port,
-            type_info = parser.get_types(),
-            topics=list(conf_parser.topics)
+            type_info = types,
+            topics=list(conf_parser.source.topics)
         )
 
 class ProducerFlink(Broker):
@@ -191,11 +191,11 @@ class ProducerFlink(Broker):
 
     @staticmethod
     def from_conf(name, conf_broker, conf_log, conf_parser):
-        parser = Parser(conf_parser.target)
+        types = Parser.get_types(conf_parser.target.file)
         return ProducerFlink(
             logger = Logger.from_conf(name, conf_log),
             host = conf_broker.host,
             port = conf_broker.port,
-            type_info = parser.get_types(),
-            topic=conf_parser.sink_topic
+            type_info = types,
+            topic=conf_parser.target.topic
         )

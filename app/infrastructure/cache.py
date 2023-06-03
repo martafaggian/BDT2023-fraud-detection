@@ -36,13 +36,32 @@ class Cache:
                 f'Cache is not connected at {self._host}:{self._port} with db {self._db}'
             )
 
-    def write(self, key, value):
+    def write(self, key, value, is_dict=False):
         self.check_connected()
-        self._cache.set(key, value)
+        if is_dict:
+            self._cache.hmset(key, value)
+        else:
+            self._cache.set(key, value)
 
-    def read(self, key):
+    def read(self, key, is_dict=False):
         self.check_connected()
+        if is_dict:
+            return self._cache.hgetall(key)
         return self._cache.get(key)
+
+    def write_multiple(self, keys, values, is_dict=False):
+        self.check_connected()
+        pipe = self._cache.pipeline()
+        for key, value in zip(keys, values):
+            if is_dict:
+                pipe.hmset(key, value)
+            else:
+                pipe.set(key, value)
+        pipe.execute()
+
+    def key_exists(self, key: str) -> bool:
+        self.check_connected()
+        return self._cache.exists(key) > 0
 
     @staticmethod
     def from_conf(name, conf_cache, conf_log):

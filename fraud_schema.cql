@@ -17,19 +17,18 @@ DROP TABLE IF EXISTS fraud_detection.accounts;
 DROP TABLE IF EXISTS fraud_detection.banks;
 DROP TABLE IF EXISTS fraud_detection.users;
 
-
 -- ################## TRANSACTIONS ################## --
 
 CREATE TABLE IF NOT EXISTS fraud_detection.transactions (
     transaction_id UUID,
     timestamp TIMESTAMP,
-    user_id UUID,
-    account_id UUID,
-    bank_id UUID,
+    user_id TEXT,
+    account_id TEXT,
+    bank_id TEXT,
     balance_before DOUBLE,
     balance_after DOUBLE,
     account_type TEXT,
-    counterparty_account_id UUID,
+    counterparty_account_id TEXT,
     counterparty_isinternal BOOLEAN,
     counterparty_name TEXT,
     counterparty_type TEXT,
@@ -42,7 +41,7 @@ CREATE TABLE IF NOT EXISTS fraud_detection.transactions (
     PRIMARY KEY ((transaction_id), timestamp))
     WITH CLUSTERING ORDER BY(timestamp DESC);
 
-CREATE MATERIALIZED VIEW fraud_detection.transactions_by_bank AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS fraud_detection.transactions_by_bank AS
     SELECT * FROM fraud_detection.transactions
     WHERE bank_id IS NOT NULL AND
           transaction_id IS NOT NULL AND
@@ -50,7 +49,7 @@ CREATE MATERIALIZED VIEW fraud_detection.transactions_by_bank AS
     PRIMARY KEY ((bank_id, transaction_id), timestamp)
     WITH CLUSTERING ORDER BY (timestamp DESC);
 
-CREATE MATERIALIZED VIEW fraud_detection.transactions_by_user AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS fraud_detection.transactions_by_user AS
     SELECT * FROM fraud_detection.transactions
     WHERE user_id IS NOT NULL AND
           transaction_id IS NOT NULL AND
@@ -58,7 +57,7 @@ CREATE MATERIALIZED VIEW fraud_detection.transactions_by_user AS
     PRIMARY KEY ((user_id, transaction_id), timestamp)
     WITH CLUSTERING ORDER BY (timestamp DESC);
 
-CREATE MATERIALIZED VIEW fraud_detection.transactions_by_account AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS fraud_detection.transactions_by_account AS
     SELECT * FROM fraud_detection.transactions
     WHERE account_id IS NOT NULL AND
           transaction_id IS NOT NULL AND
@@ -68,7 +67,7 @@ CREATE MATERIALIZED VIEW fraud_detection.transactions_by_account AS
 
 -- ################## TRANSACTIONS ################## --
 
-CREATE TABLE fraud_detection.accounts(
+CREATE TABLE IF NOT EXISTS fraud_detection.accounts(
     account_id UUID,
     user_id UUID,
     bank_id UUID,
@@ -77,14 +76,14 @@ CREATE TABLE fraud_detection.accounts(
     PRIMARY KEY (account_id)
 );
 
-CREATE MATERIALIZED VIEW fraud_detection.accounts_by_user AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS fraud_detection.accounts_by_user AS
     SELECT * FROM fraud_detection.accounts
     WHERE account_id IS NOT NULL AND
           user_id IS NOT NULL
     PRIMARY KEY ((user_id), account_id)
     WITH CLUSTERING ORDER BY (account_id ASC);
 
-CREATE MATERIALIZED VIEW fraud_detection.accounts_by_bank AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS fraud_detection.accounts_by_bank AS
     SELECT * FROM fraud_detection.accounts
     WHERE account_id IS NOT NULL AND
           bank_id IS NOT NULL
@@ -93,7 +92,7 @@ CREATE MATERIALIZED VIEW fraud_detection.accounts_by_bank AS
 
 -- ################## BANKS ################## --
 
-CREATE TABLE fraud_detection.banks(
+CREATE TABLE IF NOT EXISTS fraud_detection.banks(
     bank_id UUID,
     name TEXT,
     address TEXT,
@@ -103,7 +102,7 @@ CREATE TABLE fraud_detection.banks(
 
 -- ################## USERS ################## --
 
-CREATE TABLE fraud_detection.users(
+CREATE TABLE IF NOT EXISTS fraud_detection.users(
     user_id UUID,
     name TEXT,
     ssn TEXT,
@@ -112,61 +111,3 @@ CREATE TABLE fraud_detection.users(
     registration_date DATE,
     PRIMARY KEY (user_id)
 );
-
--- ################## INSERTS ################## --
---
--- insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
---                           bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
---                           counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
--- values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
---         'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
--- insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
---                           bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
---                           counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
--- values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
---         'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
--- insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
---                           bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
---                           counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
--- values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
---         'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
--- insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
---                           bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
---                           counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
--- values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
---         'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
--- insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
---                           bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
---                           counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
--- values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
---         'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
--- insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
---                           bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
---                           counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
--- values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
---         'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
--- insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
---                           bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
---                           counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
--- values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
---         'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
--- insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
---                           bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
---                           counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
--- values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
---         'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
--- insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
---                           bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
---                           counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
--- values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
---         'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
--- insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
---                           bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
---                           counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
--- values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
---         'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
--- insert into fraud_detection.transactions (transaction_id, "timestamp", account_id, account_type, amount, balance_after, balance_before,
---                           bank_id, counterparty_account_id, counterparty_isinternal, counterparty_name,
---                           counterparty_type, direction, fraud_confidence, is_fraud, source_location, status, user_id)
--- values (uuid(), toTimestamp(now()), uuid(), 'credit', 200, 1000, 800, uuid(), uuid(), true, 'paypal', 'online',
---         'outbound', 0.95, True, (100.0, 200.0), 'confirmed', uuid());
