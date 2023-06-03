@@ -6,7 +6,12 @@ from streamers_manager import StreamersManager
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--conf', help='YAML config file')
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('-s', '--start', help='Start streaming', action='store_true')
+    group.add_argument('-e', '--enable', help='Enable streaming', action='store_true')
+    group.add_argument('-d', '--disable', help='Disable streaming', action='store_true')
+    group.add_argument('-i', '--interrupt', help='Interrupt streaming', action='store_true')
+    parser.add_argument('-c', '--conf', help='YAML config file', required=True)
 
     args = parser.parse_args()
     conf = OmegaConf.load(args.conf)
@@ -19,6 +24,15 @@ if __name__ == '__main__':
             conf_broker=conf.kafka
         )
 
-        manager.start_all()
+        if args.start:
+            manager.start_all()
+        elif args.enable:
+            manager.enable_all()
+        elif args.disable:
+            manager.disable_all()
+        elif args.interrupt:
+            manager.interrupt_all()
+        else:
+            parser.print_help()
     except KeyboardInterrupt:
         manager.interrupt_all()

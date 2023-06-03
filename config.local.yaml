@@ -1,0 +1,50 @@
+cassandra:
+  host: localhost
+  port: 9042
+
+kafka:
+  host: localhost
+  port: 9092
+
+redis:
+  host: localhost
+  port: 6379
+  db: 0
+
+cache:
+  accounts: ./data/accounts.csv
+  accounts_key: parser.accounts
+
+streamers:
+  - name: streamer1
+    file: ./data/synthetic_financial_datasets.csv
+    topic: raw-streamer1
+    status_key: streamer1.active
+    messages_per_second: 0.05
+    sleep_disabled: 10
+  - name: streamer2
+    file: ./data/synthetic_financial_datasets_short.csv
+    topic: raw-streamer2
+    status_key: streamer2.active
+    messages_per_second: 0.02
+    sleep_disabled: 10
+
+parsers:
+  - source:
+      name: synthetic_financial_datasets
+      topics:
+        - raw-streamer1
+        - raw-streamer2
+      file: ./parsers/synthetic_financial_datasets.json
+    target:
+      name: target
+      #topic: parsed-synthetic_financial_datasets
+      file: ./parsers/target.json
+
+logs:
+  dir: ./logs
+  info_file: info.log
+  warning_file: info.log
+  error_file: error.log
+  critical_file: error.log
+  debug_file: debug.log

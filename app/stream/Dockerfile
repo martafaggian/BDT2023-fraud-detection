@@ -10,4 +10,4 @@ RUN pip install -e .
 WORKDIR /env/app
 COPY config.yaml .
 
-CMD ["python", "stream/main.py", "-c", "config.yaml"]
+CMD ["python", "stream/main.py", "-c", "config.yaml", "-s"]

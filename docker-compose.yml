@@ -14,7 +14,7 @@ services:
       - CASSANDRA_AUTO_BOOTSTRAP=true
     volumes:
       - ./data/cassandra-1:/var/lib/cassandra
-      - ./conf/cassandra-1.yaml:/etc/cassandra/cassandra.yaml
+      #- ./conf/cassandra-1.yaml:/etc/cassandra/cassandra.yaml
     ports:
       - "9042:9042"
     networks:
@@ -182,7 +182,7 @@ services:
       context: .
       dockerfile: app/stream/Dockerfile
     container_name: streamer
-    restart: always
+    #restart: always
     depends_on:
       - redis
       - kafka
