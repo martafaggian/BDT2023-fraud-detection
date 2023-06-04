@@ -21,6 +21,7 @@
 + Flask
 + Grafana
 + Cassandra
++ Zookeeper
 
 
 ---
