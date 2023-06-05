@@ -135,18 +135,20 @@ services:
       streamer-net:
         ipv4_address: 172.28.1.4
 
-  #kafka-ui:
-    #container_name: kafka-ui
-    #image: provectuslabs/kafka-ui:latest
-    #ports:
-      #- 8080:8080
-    #environment:
-      #DYNAMIC_CONFIG_ENABLED: true
-    #volumes:
-      #- ./data/kui/config.yaml:/etc/kafkaui/dynamic_config.yaml
-    #networks:
-      #streamer-net:
-        #ipv4_address: 172.28.1.9
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 8080:8080
+    environment:
+      DYNAMIC_CONFIG_ENABLED: true
+    depends_on:
+      - kafka
+    volumes:
+      - ./data/kui/config.yaml:/etc/kafkaui/dynamic_config.yaml
+    networks:
+      streamer-net:
+        ipv4_address: 172.28.1.9
 
   # === Flink === #
 
