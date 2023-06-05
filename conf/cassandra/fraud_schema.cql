@@ -1,26 +1,31 @@
 SELECT * FROM system_schema.keyspaces;
 
+DROP KEYSPACE IF EXISTS fraud_detection;
 CREATE KEYSPACE IF NOT EXISTS fraud_detection
     WITH REPLICATION = {
         'class' : 'NetworkTopologyStrategy',
         'dc1' : 3
         };
 
-DROP MATERIALIZED VIEW IF EXISTS fraud_detection.transactions_by_account;
-DROP MATERIALIZED VIEW IF EXISTS fraud_detection.transactions_by_bank;
-DROP MATERIALIZED VIEW IF EXISTS fraud_detection.transactions_by_user;
-DROP TABLE IF EXISTS fraud_detection.transactions;
+-- DROP MATERIALIZED VIEW IF EXISTS fraud_detection.transactions_by_account;
+-- DROP MATERIALIZED VIEW IF EXISTS fraud_detection.transactions_by_bank;
+-- DROP MATERIALIZED VIEW IF EXISTS fraud_detection.transactions_by_user;
+-- DROP TABLE IF EXISTS fraud_detection.transactions;
+--
+-- DROP MATERIALIZED VIEW IF EXISTS fraud_detection.accounts_by_bank;
+-- DROP MATERIALIZED VIEW IF EXISTS fraud_detection.accounts_by_user;
+-- DROP TABLE IF EXISTS fraud_detection.accounts;
+-- DROP TABLE IF EXISTS fraud_detection.banks;
+-- DROP TABLE IF EXISTS fraud_detection.users;
 
-DROP MATERIALIZED VIEW IF EXISTS fraud_detection.accounts_by_bank;
-DROP MATERIALIZED VIEW IF EXISTS fraud_detection.accounts_by_user;
-DROP TABLE IF EXISTS fraud_detection.accounts;
-DROP TABLE IF EXISTS fraud_detection.banks;
-DROP TABLE IF EXISTS fraud_detection.users;
-
+-- NOTE: all ids are of type TEXT and not UUID due to flink unable
+--       to cast UUID types!
+--       It is sufficient to cast uuid to text:
+--       CAST(uuid() AS TEXT)
 -- ################## TRANSACTIONS ################## --
 
 CREATE TABLE IF NOT EXISTS fraud_detection.transactions (
-    transaction_id UUID,
+    transaction_id TEXT,
     timestamp TIMESTAMP,
     user_id TEXT,
     account_id TEXT,
@@ -93,7 +98,7 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS fraud_detection.accounts_by_bank AS
 -- ################## BANKS ################## --
 
 CREATE TABLE IF NOT EXISTS fraud_detection.banks(
-    bank_id UUID,
+    bank_id TEXT,
     name TEXT,
     address TEXT,
     phone TEXT,
@@ -103,7 +108,7 @@ CREATE TABLE IF NOT EXISTS fraud_detection.banks(
 -- ################## USERS ################## --
 
 CREATE TABLE IF NOT EXISTS fraud_detection.users(
-    user_id UUID,
+    user_id TEXT,
     name TEXT,
     ssn TEXT,
     email TEXT,

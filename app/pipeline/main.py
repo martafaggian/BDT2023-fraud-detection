@@ -59,7 +59,7 @@ class SFDToTarget(MapFunction):
     def get_query():
         query = Transaction.get_query_dict()
         query.update({
-            'transaction_id' : 'uuid()',
+            'transaction_id' : 'CAST(uuid() AS TEXT)',
             '"timestamp"' : 'toTimestamp(now())'
         })
         return query
