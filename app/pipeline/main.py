@@ -217,7 +217,7 @@ def main(conf, cache_conf_args):
         CassandraSink.add_sink(side) \
             .set_query(sink.get_update_query(
                 DatabaseTables.ACCOUNTS,
-                "account_id", "?",
+                "account_id", "'?'",
                 "balance", "?")) \
             .set_host(sink.get_host(), sink.get_port()) \
             .build()

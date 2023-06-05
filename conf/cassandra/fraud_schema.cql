@@ -1,6 +1,4 @@
-SELECT * FROM system_schema.keyspaces;
-
-DROP KEYSPACE IF EXISTS fraud_detection;
+-- DROP KEYSPACE IF EXISTS fraud_detection;
 CREATE KEYSPACE IF NOT EXISTS fraud_detection
     WITH REPLICATION = {
         'class' : 'NetworkTopologyStrategy',
