@@ -99,16 +99,6 @@ class Parser:
         else:
             direction = "outbound"
         #
-        # Fraud detection :)
-        # Pyflink ML should be easy to integrate:
-        # https://nightlies.apache.org/flink/flink-ml-docs-master/docs/try-flink-ml/python/quick-start/
-        if record["amount"] > 5000:
-            is_fraud = 1
-            fraud_conf = 1.0
-        else:
-            is_fraud = 0
-            fraud_conf = 0.0
-        #
         output = Row(
             user_id = account["user_id"],
             account_id = record["nameOrig"],
@@ -124,10 +114,31 @@ class Parser:
             direction = direction,
             status = "confirmed",
             source_location = None,
-            is_fraud = is_fraud,
-            fraud_confidence = fraud_conf
+            is_fraud = None,
+            fraud_confidence = None
         )
         return output
+
+class FraudDetection:
+    @staticmethod
+    def compute_fraud(record):
+        # Fraud detection :)
+        # Pyflink ML should be easy to integrate:
+        # https://nightlies.apache.org/flink/flink-ml-docs-master/docs/try-flink-ml/python/quick-start/
+        if record["amount"] > 5000:
+            is_fraud = 1
+            fraud_conf = 1.0
+        else:
+            is_fraud = 0
+            fraud_conf = 0.0
+        return is_fraud, fraud_conf
+
+    @staticmethod
+    def update_record(record):
+        is_fraud, fraud_conf = FraudDetection.compute_fraud(record)
+        record["is_fraud"] = is_fraud
+        record["fraud_confidence"] = fraud_conf
+        return record
 
 def main(conf, cache_conf_args):
     for pconf in conf.parsers:
@@ -157,10 +168,11 @@ def main(conf, cache_conf_args):
         #
         env = StreamExecutionEnvironment.get_execution_environment()
         ds = env.add_source(consumer)
-        ds = ds.map(
-            lambda x: parser.parse(x, cache_conf_args),
-            parser._target_types
-        )
+        ds = ds.map(lambda x: parser.parse(x, cache_conf_args),
+                    parser._target_types)
+        ds = ds.map(lambda x: FraudDetection.update_record(x),
+                    parser._target_types)
+        ds = ds.set_parallelism(3)
         # AUTH IS (apparently) NOT IMPLEMENTED!
         #TODO: add account update query
         insert = sink.get_insert_query(
