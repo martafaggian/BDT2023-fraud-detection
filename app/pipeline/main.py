@@ -96,14 +96,9 @@ class Parser:
             raise Exception(f"Unknown type {type_str}")
 
     @staticmethod
-    def from_sfd_to_target(record, conf_cache, conf_logs, db):
+    def from_sfd_to_target(record, cache_conf_args):
         # Declaration must be internal due to Flink contraints!
-        cache = Cache.from_conf(
-            "parser-cache",
-            conf_cache,
-            conf_logs,
-            db = db
-        )
+        cache = Cache.from_conf(**cache_conf_args)
         #
         account = cache.read(record["nameOrig"], is_dict=True)
         counterparty_id = record["nameDest"]
@@ -150,7 +145,7 @@ class Parser:
         )
         return output
 
-def main(conf, cache):
+def main(conf, cache_conf_args):
     for pconf in conf.parsers:
         #
         source = ConsumerFlink.from_conf(
@@ -179,12 +174,9 @@ def main(conf, cache):
         env = StreamExecutionEnvironment.get_execution_environment()
         ds = env.add_source(consumer)
         ds = ds.map(
-            lambda x: parser.parse(
-                x,
-                conf.redis,
-                conf.logs,
-                conf.redis.accounts.db),
-            parser._target_types)
+            lambda x: parser.parse(x, cache_conf_args),
+            parser._target_types
+        )
         # AUTH IS (apparently) NOT IMPLEMENTED!
         #TODO: add account update query
         CassandraSink.add_sink(ds). \
@@ -195,11 +187,12 @@ def main(conf, cache):
 
 if __name__ == '__main__':
     conf = OmegaConf.load("config.yaml")
-    cache = Cache.from_conf(
-        "parser-cache",
-        conf.redis,
-        conf.logs,
-        db = conf.redis.accounts.db
-    )
+    cache_conf_args = {
+        "name": "parser-cache",
+        "conf_cache": conf.redis,
+        "conf_log": conf.logs,
+        "db" : conf.redis.accounts.db
+    }
+    cache = Cache.from_conf(**cache_conf_args)
     Account.csv_to_cache(cache, conf.redis.accounts.file)
-    main(conf, cache)
+    main(conf, cache_conf_args)
