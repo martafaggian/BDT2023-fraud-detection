@@ -12,6 +12,16 @@ def main(conf):
     while True:
         consumer.retrieve()
 
+'''
+    The main function for the Kafka consumer application. It initializes the logger,
+    creates a ConsumerPrint object, subscribes to the specified topics, and continuously
+    retrieves messages from the Kafka broker.
+
+    param:
+        conf (OmegaConf): The configuration object containing the application settings.
+'''
+    
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--conf', help='YAML config file')
