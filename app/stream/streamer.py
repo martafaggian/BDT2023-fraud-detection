@@ -101,8 +101,10 @@ class Streamer:
     def from_conf(conf_stream, conf_log, conf_broker, conf_cache):
         logger = Logger.from_conf(conf_stream.name, conf_log)
         cache = Cache.from_conf(
-            f"{conf_stream.name}.redis.cache", conf_log=conf_log,
-            conf_cache=conf_cache)
+            f"{conf_stream.name}.redis.cache",
+            conf_log=conf_log,
+            conf_cache=conf_cache,
+            db=conf_cache.streamers.db)
         producer = Producer.from_conf(
             f"{conf_stream.name}.kafka.producer", conf_log=conf_log,
             conf_broker=conf_broker)

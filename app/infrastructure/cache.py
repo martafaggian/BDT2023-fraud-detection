@@ -51,24 +51,24 @@ class Cache:
 
     def write_multiple(self, keys, values, is_dict=False):
         self.check_connected()
-        pipe = self._cache.pipeline()
-        for key, value in zip(keys, values):
-            if is_dict:
-                pipe.hmset(key, value)
-            else:
-                pipe.set(key, value)
-        pipe.execute()
+        with self._cache.pipeline() as pipe:
+            for key, value in zip(keys, values):
+                if is_dict:
+                    pipe.hmset(key, value)
+                else:
+                    pipe.set(key, value)
+            pipe.execute()
 
     def key_exists(self, key: str) -> bool:
         self.check_connected()
         return self._cache.exists(key) > 0
 
     @staticmethod
-    def from_conf(name, conf_cache, conf_log):
+    def from_conf(name, conf_cache, conf_log, db):
         logger = Logger.from_conf(name, conf_log)
         return Cache(
             logger=logger,
             host=conf_cache.host,
             port=conf_cache.port,
-            db=conf_cache.db
+            db=db
         )

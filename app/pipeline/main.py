@@ -10,8 +10,8 @@ from pyflink.datastream import StreamExecutionEnvironment
 from pyflink.datastream.connectors.cassandra import CassandraSink
 from pyflink.common.typeinfo import Types
 from pyflink.common.types import Row
-from app.infrastructure.broker import ConsumerFlink
-from app.infrastructure.cache import Cache
+from app.infrastructure import Database, Cache, ConsumerFlink
+from app.model import Account
 
 class SourceTypes(str, Enum):
     SYNTHETIC_FINANCIAL_DATASETS = "synthetic_financial_datasets"
@@ -96,12 +96,13 @@ class Parser:
             raise Exception(f"Unknown type {type_str}")
 
     @staticmethod
-    def from_sfd_to_target(record, conf_cache, conf_logs):
+    def from_sfd_to_target(record, conf_cache, conf_logs, db):
         # Declaration must be internal due to Flink contraints!
         cache = Cache.from_conf(
             "parser-cache",
             conf_cache,
-            conf_logs
+            conf_logs,
+            db = db
         )
         #
         account = cache.read(record["nameOrig"], is_dict=True)
@@ -149,12 +150,6 @@ class Parser:
         )
         return output
 
-def write_cache(cache, key, accounts):
-    df = pd.read_csv(accounts)
-    keys = df.pop("account_id")
-    values = df[["bank_id", "user_id", "type"]].to_dict(orient="records")
-    cache.write_multiple(keys, values, is_dict=True)
-
 def main(conf, cache):
     for pconf in conf.parsers:
         #
@@ -165,6 +160,13 @@ def main(conf, cache):
             conf_parser=pconf,
             types = Parser.get_types(pconf.source.file)
         )
+        #
+        sink = Database.from_conf(
+            name=f"cassandra-{pconf.target.name}",
+            conf_db = conf.cassandra,
+            conf_log = conf.logs
+        )
+        #
         consumer = source.get_consumer()
         #
         parser = Parser(
@@ -176,10 +178,18 @@ def main(conf, cache):
         #
         env = StreamExecutionEnvironment.get_execution_environment()
         ds = env.add_source(consumer)
-        ds = ds.map(lambda x: parser.parse(x, conf.redis, conf.logs), parser._target_types)
+        ds = ds.map(
+            lambda x: parser.parse(
+                x,
+                conf.redis,
+                conf.logs,
+                conf.redis.accounts.db),
+            parser._target_types)
+        # AUTH IS (apparently) NOT IMPLEMENTED!
+        #TODO: add account update query
         CassandraSink.add_sink(ds). \
             set_query(parser.insert). \
-            set_host('cassandra-1'). \
+            set_host(sink.get_host(), sink.get_port()). \
             build()
         env.execute(f"Parser {pconf.source.name} -> {pconf.target.name} + AD")
 
@@ -188,7 +198,8 @@ if __name__ == '__main__':
     cache = Cache.from_conf(
         "parser-cache",
         conf.redis,
-        conf.logs
+        conf.logs,
+        db = conf.redis.accounts.db
     )
-    write_cache(cache, conf.cache.accounts_key, conf.cache.accounts)
+    Account.csv_to_cache(cache, conf.redis.accounts.file)
     main(conf, cache)

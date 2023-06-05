@@ -1,6 +1,9 @@
 cassandra:
   host: cassandra-1
   port: 9042
+  keyspace: fraud_detection
+  username: null
+  password: null
 
 kafka:
   host: kafka
@@ -9,11 +12,11 @@ kafka:
 redis:
   host: redis
   port: 6379
-  db: 0
-
-cache:
-  accounts: ./data/accounts.csv
-  accounts_key: parser.accounts
+  accounts:
+    file: ./data/accounts.csv
+    db: 1
+  streamers:
+    db: 0
 
 streamers:
   - name: streamer1

@@ -15,23 +15,22 @@ class TransactionDirection(IntEnum):
 
 @dataclass
 class Transaction:
-    # ID: str # Autoincremental in cassandra
-    timestamp: datetime
-    _ip_address: str
-    _ip_location: str
-    ip_lat: float
-    ip_lon: float
-    direction: TransactionDirection
-    user_ID: str # could have been put into source object, but esistono conti cointestati
-    source_ID: str
-    destination_ID: str
-    amount: float
-    _currency: str
-    source_balance_before: float
-    source_balance_after: float
-    destination_balance_before: float
-    destination_balance_after: float
-    status: TransactionStatus
+    transaction_id: str = None
+    user_ID: str
+    account_ID: str
+    direction: TransactionDirection = None
+    amount: float = None
+    _currency: str = None
+    source_balance_before: float = None
+    source_balance_after: float = None
+    destination_balance_before: float = None
+    destination_balance_after: float = None
+    timestamp: str = None
+    ip_lat: float = None
+    ip_lon: float = None
+    _ip_address: str = None
+    _ip_location: str = None
+    status: TransactionStatus = None
 
     def set_ip_location(self):
         # detect ip address location give address
