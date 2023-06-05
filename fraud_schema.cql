@@ -68,9 +68,9 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS fraud_detection.transactions_by_account A
 -- ################## TRANSACTIONS ################## --
 
 CREATE TABLE IF NOT EXISTS fraud_detection.accounts(
-    account_id UUID,
-    user_id UUID,
-    bank_id UUID,
+    account_id text,
+    user_id text,
+    bank_id text,
     type TEXT,
     balance DOUBLE,
     PRIMARY KEY (account_id)

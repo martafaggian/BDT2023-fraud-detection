@@ -78,6 +78,19 @@ class Database:
         ({','.join(values)})
         """
 
+    def get_update_query(
+        self,
+        table_name,
+        id_key,
+        id_value,
+        key,
+        value) -> str:
+        return f"""
+        UPDATE {self._keyspace}.{table_name}
+        SET {key} = {value}
+        WHERE {id_key} = {id_value}
+        """
+
     @staticmethod
     def from_conf(name, conf_db, conf_log):
         logger = Logger.from_conf(name, conf_log)

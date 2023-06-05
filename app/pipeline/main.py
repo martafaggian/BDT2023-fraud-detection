@@ -6,7 +6,8 @@ import json
 from enum import Enum
 import pandas as pd
 from omegaconf import OmegaConf
-from pyflink.datastream import StreamExecutionEnvironment
+from pyflink.datastream import StreamExecutionEnvironment, OutputTag
+from pyflink.datastream.functions import ProcessFunction
 from pyflink.datastream.connectors.cassandra import CassandraSink
 from pyflink.common.typeinfo import Types
 from pyflink.common.types import Row
@@ -165,25 +166,55 @@ def main(conf, cache_conf_args):
             source_parser_file_path = pconf.source.file,
             target_parser_file_path = pconf.target.file
         )
-        #
+        # 1. Create Streaming
         env = StreamExecutionEnvironment.get_execution_environment()
+        # 2. Add Kafka Source
         ds = env.add_source(consumer)
+        # 3. Parse input to target (db) output
         ds = ds.map(lambda x: parser.parse(x, cache_conf_args),
                     parser._target_types)
-        ds = ds.map(lambda x: FraudDetection.update_record(x),
-                    parser._target_types)
-        ds = ds.set_parallelism(3)
-        # AUTH IS (apparently) NOT IMPLEMENTED!
-        #TODO: add account update query
-        insert = sink.get_insert_query(
-            DatabaseTables.TRANSACTIONS,
-            parser.query.keys(),
-            parser.query.values()
-        )
-        CassandraSink.add_sink(ds). \
-            set_query(insert). \
-            set_host(sink.get_host(), sink.get_port()). \
-            build()
+        # 4. Split stream in two:
+        # - main: fraud detection + transaction insert
+        # - side: account balance update
+        tag = OutputTag("side", Types.ROW_NAMED(["balance", "account_id"],
+                                                [Types.DOUBLE(), Types.STRING()]))
+
+        class MyProcessFunction(ProcessFunction):
+            def process_element(self, value, ctx: 'ProcessFunction.Context'):
+                # Main -> Fraud detection
+                yield value
+                # Side -> Account balance update
+                yield tag, Row(
+                    balance = value["balance_after"],
+                    account_id = value["account_id"]
+                )
+
+        main = ds.process(MyProcessFunction(), parser._target_types)
+        side = main.get_side_output(tag)
+        # Main -> Fraud detection
+        main = main.map(lambda x: FraudDetection.update_record(x), parser._target_types)
+        # Main -> save transaction
+        ## AUTH IS (apparently) NOT IMPLEMENTED!
+        CassandraSink.add_sink(main) \
+            .set_query(sink.get_insert_query(
+                DatabaseTables.TRANSACTIONS,
+                parser.query.keys(),
+                parser.query.values()
+            )) \
+            .set_host(sink.get_host(), sink.get_port()) \
+            .build()
+        # Side -> Account balance update
+        CassandraSink.add_sink(side) \
+            .set_query(sink.get_update_query(
+                DatabaseTables.ACCOUNTS,
+                "account_id", "?",
+                "balance", "?")) \
+            .set_host(sink.get_host(), sink.get_port()) \
+            .build()
+        # Set parallelism counts and run environment
+        ds = ds.set_parallelism(2)
+        main = main.set_parallelism(2)
+        side = side.set_parallelism(2)
         env.execute(f"Parser {pconf.source.name} -> {pconf.target.name} + AD")
 
 if __name__ == '__main__':
