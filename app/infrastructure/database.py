@@ -1,6 +1,14 @@
+from __future__ import annotations
 from app.utils import Logger
+from enum import Enum
 from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
+
+class DatabaseTables(str, Enum):
+    ACCOUNTS = 'accounts'
+    TRANSACTIONS = 'transactions'
+    BANKS = 'banks'
+    USERS = 'users'
 
 class DatabaseNotConnectedException(Exception):
     def __init__(self, logger, message, *args):
@@ -57,6 +65,18 @@ class Database:
             raise DatabaseNotConnectedException(
                 self._logger, f'Database is not connected at {self._host}:{self._port}'
             ) from e
+
+    def get_insert_query(
+        self,
+        table_name: DatabaseTables,
+        keys: list,
+        values: list) -> str:
+        return f"""
+        INSERT INTO {self._keyspace}.{table_name}
+        ({','.join(keys)})
+        VALUES
+        ({','.join(values)})
+        """
 
     @staticmethod
     def from_conf(name, conf_db, conf_log):

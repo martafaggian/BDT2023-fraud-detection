@@ -10,8 +10,8 @@ from pyflink.datastream import StreamExecutionEnvironment
 from pyflink.datastream.connectors.cassandra import CassandraSink
 from pyflink.common.typeinfo import Types
 from pyflink.common.types import Row
-from app.infrastructure import Database, Cache, ConsumerFlink
-from app.model import Account
+from app.infrastructure import Database, DatabaseTables, Cache, ConsumerFlink
+from app.model import Account, Transaction
 
 class SourceTypes(str, Enum):
     SYNTHETIC_FINANCIAL_DATASETS = "synthetic_financial_datasets"
@@ -30,40 +30,24 @@ class Parser:
         self._source = source
         self._target = target
         self._source = source
-        query = None
+        self.query = None
 
         if self._source == SourceTypes.SYNTHETIC_FINANCIAL_DATASETS and self._target == SourceTypes.TARGET:
             self.parse = self.from_sfd_to_target
-            query = {
+            query = Transaction.get_query_dict()
+            query.update({
                 'transaction_id' : 'uuid()',
-                '"timestamp"' : 'toTimestamp(now())',
-                'user_id' : '?',
-                'account_id' : '?',
-                'bank_id' : '?',
-                'balance_before' : '?',
-                'balance_after' : '?',
-                'account_type' : '?',
-                'counterparty_account_id' : '?',
-                'counterparty_isinternal' : '?',
-                'counterparty_type' : '?',
-                'counterparty_name' : '?',
-                'amount' : '?',
-                'direction' : '?',
-                'status' : '?',
-                'source_location' : '?',
-                'is_fraud' : '?',
-                'fraud_confidence' : '?',
-            }
+                '"timestamp"' : 'toTimestamp(now())'
+            })
+            self.set_query(query)
         else:
             raise NotImplementedError(f"Parser from {self._source} to {self._target} not implemented")
 
-        if query is not None:
-            self.insert = f"""
-            INSERT INTO fraud_detection.transactions
-            ({','.join(query.keys())})
-            VALUES
-            ({','.join(query.values())})
-            """
+    def get_query(self):
+        return self.query
+
+    def set_query(self, query):
+        self.query = query
 
     @classmethod
     def get_types(cls, file: str):
@@ -179,8 +163,13 @@ def main(conf, cache_conf_args):
         )
         # AUTH IS (apparently) NOT IMPLEMENTED!
         #TODO: add account update query
+        insert = sink.get_insert_query(
+            DatabaseTables.TRANSACTIONS,
+            parser.query.keys(),
+            parser.query.values()
+        )
         CassandraSink.add_sink(ds). \
-            set_query(parser.insert). \
+            set_query(insert). \
             set_host(sink.get_host(), sink.get_port()). \
             build()
         env.execute(f"Parser {pconf.source.name} -> {pconf.target.name} + AD")
