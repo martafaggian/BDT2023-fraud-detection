@@ -142,6 +142,7 @@ class FraudDetection:
         return record
 
 def main(conf, cache_conf_args):
+    procs = conf.flink.parser.parallelism
     for pconf in conf.parsers:
         #
         source = ConsumerFlink.from_conf(
@@ -167,7 +168,9 @@ def main(conf, cache_conf_args):
             target_parser_file_path = pconf.target.file
         )
         # 1. Create Streaming
-        env = StreamExecutionEnvironment.get_execution_environment()
+        env = StreamExecutionEnvironment\
+            .get_execution_environment()\
+            .set_parallelism(procs)
         # 2. Add Kafka Source
         ds = env.add_source(consumer)
         # 3. Parse input to target (db) output
@@ -211,10 +214,6 @@ def main(conf, cache_conf_args):
                 "balance", "?")) \
             .set_host(sink.get_host(), sink.get_port()) \
             .build()
-        # Set parallelism counts and run environment
-        ds = ds.set_parallelism(2)
-        main = main.set_parallelism(2)
-        side = side.set_parallelism(2)
         env.execute(f"Parser {pconf.source.name} -> {pconf.target.name} + AD")
 
 if __name__ == '__main__':

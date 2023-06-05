@@ -5,6 +5,10 @@ cassandra:
   username: null
   password: null
 
+flink:
+  parser:
+    parallelism: 2
+
 kafka:
   host: kafka
   port: 9092
