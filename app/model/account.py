@@ -1,9 +1,33 @@
+'''
+This module defines a data class Account that represents an account and provides methods for
+data conversion and caching. The to_dict() method converts the Account object to a dictionary,
+to_json() converts it to a JSON string, and to_cache() writes the account data to a cache
+object using a specified key. The csv_to_cache() method reads CSV data from a file, extracts 
+the required columns, and writes the data to the cache using the 'account_id' column as the key.
+
+The module can be used as follows:
+account = Account(account_id='123', user_id='456', bank_id='789', account_type='savings', balance=1000.0)
+
+account_dict = account.to_dict()
+
+account_json = account.to_json()
+
+cache = MyCache()  # Initialize your cache object
+account.to_cache(cache, keyprefix="account_")
+
+cache = MyCache()  # Initialize your cache object
+Account.csv_to_cache(cache, file='accounts.csv')
+
+'''
 import json
 from dataclasses import dataclass
 import pandas as pd
 
 @dataclass
 class Account:
+    '''
+    Represents an account with associated attributes.
+    '''
     account_id: str
     user_id: str
     bank_id: str
@@ -11,6 +35,9 @@ class Account:
     balance: float = None
 
     def to_dict(self):
+        '''
+        Convert an account object to a dictionary
+        '''
         return {
             'account_id': self.account_id,
             'user_id': self.user_id,
@@ -20,9 +47,20 @@ class Account:
         }
 
     def to_json(self):
+        '''
+        Converts the Account object to a JSON string.
+        '''
         return json.dumps(self.to_dict())
 
     def to_cache(self, cache, keyprefix=""):
+        '''
+        Writes the account object to a cache with the specified key.
+        
+        :param cache: The cache object to write the data to
+        :type cache:
+        :param keyprefix: Prefix to prepend to the key
+        :type keyprefix: str
+        '''
         value = self.to_dict()
         value.pop('balance')
         key = f"{keyprefix}{value.pop('account_id')}"
@@ -30,6 +68,18 @@ class Account:
 
     @staticmethod
     def csv_to_cache(cache, file):
+        '''
+        Converts CSV data to cache entries.
+
+        Reads the CSV file, extracts the necessary columns, and writes the data
+        to the cache using the 'account_id' column as the key.
+        
+        :param cache: The cache object to write the data to 
+        :type cache: cache object
+        :param file: The path to the CSV file
+        :type file: str
+        
+        '''
         df = pd.read_csv(file)
         keys = df.pop("account_id")
         values = df[["bank_id", "user_id", "type"]].to_dict(orient="records")

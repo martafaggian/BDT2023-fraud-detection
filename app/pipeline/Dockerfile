@@ -1,3 +1,6 @@
+#This Dockerfile sets up a Flink environment with Python support. 
+
+#Base Image Selection
 FROM flink:1.17.1
 ARG FLINK_VERSION=1.17.1
 
@@ -12,11 +15,12 @@ COPY lib/flink/apache-flink*.tar.gz /
 RUN pip3 install /apache-flink-libraries*.tar.gz && pip3 install /apache-flink*.tar.gz
 
 # TODO: do same as stream
-
+#Flink Connector Dependencies
 RUN wget -P /opt/flink/lib/ https://repo.maven.apache.org/maven2/org/apache/flink/flink-json/${FLINK_VERSION}/flink-json-${FLINK_VERSION}.jar; \
     wget -P /opt/flink/lib/ https://repo.maven.apache.org/maven2/org/apache/flink/flink-sql-connector-kafka/${FLINK_VERSION}/flink-sql-connector-kafka-${FLINK_VERSION}.jar; \
     wget -P /opt/flink/lib/ https://repo.maven.apache.org/maven2/org/apache/flink/flink-connector-cassandra_2.12/3.1.0-1.17/flink-connector-cassandra_2.12-3.1.0-1.17.jar
 
+#Application Setup
 WORKDIR /env
 COPY requirements.txt .
 RUN pip3 install --no-cache-dir -r requirements.txt
@@ -25,5 +29,6 @@ COPY parsers/ /env/app/parsers/
 COPY setup.py .
 RUN pip3 install -e .
 
+#Final Configuration
 WORKDIR /env/app
 COPY config.yaml .
