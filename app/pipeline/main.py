@@ -4,15 +4,65 @@ NB: flink requires all code in one single file!
 from __future__ import annotations
 import json
 from enum import Enum
-import pandas as pd
 from omegaconf import OmegaConf
 from pyflink.datastream import StreamExecutionEnvironment, OutputTag
-from pyflink.datastream.functions import ProcessFunction
+from pyflink.datastream.functions import ProcessFunction, MapFunction
 from pyflink.datastream.connectors.cassandra import CassandraSink
 from pyflink.common.typeinfo import Types
 from pyflink.common.types import Row
 from app.infrastructure import Database, DatabaseTables, Cache, ConsumerFlink
 from app.model import Account, Transaction
+
+class SFDToTarget(MapFunction):
+    def __init__(self, cache_conf_args):
+        super().__init__()
+        self._cache_conf_args = cache_conf_args
+
+    def map(self, record):
+        # Declaration must be internal due to Flink contraints!
+        cache = Cache.from_conf(**self._cache_conf_args)
+        #
+        account = cache.read(record["nameOrig"], is_dict=True)
+        counterparty_id = record["nameDest"]
+        counterparty_type = None
+        counterparty_isinternal = False
+        if cache.key_exists(counterparty_id):
+            counterparty = cache.read(record["nameDest"], is_dict=True)
+            counterparty_id = counterparty["user_id"]
+            counterparty_type = counterparty["type"]
+            counterparty_isinternal = True
+        #
+        if float(record["oldbalanceOrg"]) > float(record["newbalanceOrig"]):
+            direction = "inbound"
+        else:
+            direction = "outbound"
+        #
+        return Row(
+            user_id = account["user_id"],
+            account_id = record["nameOrig"],
+            bank_id = account["bank_id"],
+            balance_before = record["oldbalanceOrg"],
+            balance_after = record["newbalanceOrig"],
+            account_type = account["type"],
+            counterparty_account_id = counterparty_id,
+            counterparty_isinternal = counterparty_isinternal,
+            counterparty_type = counterparty_type,
+            counterparty_name = None,
+            amount = record["amount"],
+            direction = direction,
+            status = "confirmed",
+            source_location = None,
+            is_fraud = None,
+            fraud_confidence = None)
+
+    @staticmethod
+    def get_query():
+        query = Transaction.get_query_dict()
+        query.update({
+            'transaction_id' : 'uuid()',
+            '"timestamp"' : 'toTimestamp(now())'
+        })
+        return query
 
 class SourceTypes(str, Enum):
     SYNTHETIC_FINANCIAL_DATASETS = "synthetic_financial_datasets"
@@ -34,13 +84,8 @@ class Parser:
         self.query = None
 
         if self._source == SourceTypes.SYNTHETIC_FINANCIAL_DATASETS and self._target == SourceTypes.TARGET:
-            self.parse = self.from_sfd_to_target
-            query = Transaction.get_query_dict()
-            query.update({
-                'transaction_id' : 'uuid()',
-                '"timestamp"' : 'toTimestamp(now())'
-            })
-            self.set_query(query)
+            self.parse = SFDToTarget
+            self.set_query(SFDToTarget.get_query())
         else:
             raise NotImplementedError(f"Parser from {self._source} to {self._target} not implemented")
 
@@ -79,46 +124,6 @@ class Parser:
             return Types.TUPLE([Types.FLOAT(), Types.FLOAT()])
         else:
             raise Exception(f"Unknown type {type_str}")
-
-    @staticmethod
-    def from_sfd_to_target(record, cache_conf_args):
-        # Declaration must be internal due to Flink contraints!
-        cache = Cache.from_conf(**cache_conf_args)
-        #
-        account = cache.read(record["nameOrig"], is_dict=True)
-        counterparty_id = record["nameDest"]
-        counterparty_type = None
-        counterparty_isinternal = False
-        if cache.key_exists(counterparty_id):
-            counterparty = cache.read(record["nameDest"], is_dict=True)
-            counterparty_id = counterparty["user_id"]
-            counterparty_type = counterparty["type"]
-            counterparty_isinternal = True
-        #
-        if float(record["oldbalanceOrg"]) > float(record["newbalanceOrig"]):
-            direction = "inbound"
-        else:
-            direction = "outbound"
-        #
-        output = Row(
-            user_id = account["user_id"],
-            account_id = record["nameOrig"],
-            bank_id = account["bank_id"],
-            balance_before = record["oldbalanceOrg"],
-            balance_after = record["newbalanceOrig"],
-            account_type = account["type"],
-            counterparty_account_id = counterparty_id,
-            counterparty_isinternal = counterparty_isinternal,
-            counterparty_type = counterparty_type,
-            counterparty_name = None,
-            amount = record["amount"],
-            direction = direction,
-            status = "confirmed",
-            source_location = None,
-            is_fraud = None,
-            fraud_confidence = None
-        )
-        return output
 
 class FraudDetection:
     @staticmethod
@@ -174,15 +179,17 @@ def main(conf, cache_conf_args):
         # 2. Add Kafka Source
         ds = env.add_source(consumer)
         # 3. Parse input to target (db) output
-        ds = ds.map(lambda x: parser.parse(x, cache_conf_args),
+        ds = ds.map(parser.parse(cache_conf_args),
                     parser._target_types)
         # 4. Split stream in two:
         # - main: fraud detection + transaction insert
         # - side: account balance update
+        # NOTE: flink needs types for tags to be defined here
+        #       i.e., do not import them from external libs
         tag = OutputTag("side", Types.ROW_NAMED(["balance", "account_id"],
                                                 [Types.DOUBLE(), Types.STRING()]))
 
-        class MyProcessFunction(ProcessFunction):
+        class StreamSplitter(ProcessFunction):
             def process_element(self, value, ctx: 'ProcessFunction.Context'):
                 # Main -> Fraud detection
                 yield value
@@ -192,7 +199,7 @@ def main(conf, cache_conf_args):
                     account_id = value["account_id"]
                 )
 
-        main = ds.process(MyProcessFunction(), parser._target_types)
+        main = ds.process(StreamSplitter(), parser._target_types)
         side = main.get_side_output(tag)
         # Main -> Fraud detection
         main = main.map(lambda x: FraudDetection.update_record(x), parser._target_types)
@@ -214,7 +221,8 @@ def main(conf, cache_conf_args):
                 "balance", "?")) \
             .set_host(sink.get_host(), sink.get_port()) \
             .build()
-        env.execute(f"Parser {pconf.source.name} -> {pconf.target.name} + AD")
+        # Execute environment
+        env.execute(f"Parser {pconf.source.name} -> {pconf.target.name} + AD + Account balance update")
 
 if __name__ == '__main__':
     conf = OmegaConf.load("config.yaml")
