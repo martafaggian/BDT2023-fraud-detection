@@ -146,7 +146,7 @@ class FraudDetection:
         record["fraud_confidence"] = fraud_conf
         return record
 
-def main(conf, cache_conf_args):
+def main(conf, cache_conf_args, db_conf_args):
     procs = conf.flink.parser.parallelism
     for pconf in conf.parsers:
         #
@@ -158,11 +158,7 @@ def main(conf, cache_conf_args):
             types = Parser.get_types(pconf.source.file)
         )
         #
-        sink = Database.from_conf(
-            name=f"cassandra-{pconf.target.name}",
-            conf_db = conf.cassandra,
-            conf_log = conf.logs
-        )
+        sink = Database.from_conf(**db_conf_args)
         #
         consumer = source.get_consumer()
         #
@@ -196,7 +192,7 @@ def main(conf, cache_conf_args):
                 # Side -> Account balance update
                 yield tag, Row(
                     balance = value["balance_after"],
-                    account_id = value["account_id"]
+                    account_id = value['account_id']
                 )
 
         main = ds.process(StreamSplitter(), parser._target_types)
@@ -217,7 +213,7 @@ def main(conf, cache_conf_args):
         CassandraSink.add_sink(side) \
             .set_query(sink.get_update_query(
                 DatabaseTables.ACCOUNTS,
-                "account_id", "'?'",
+                "account_id", "?",
                 "balance", "?")) \
             .set_host(sink.get_host(), sink.get_port()) \
             .build()
@@ -232,6 +228,13 @@ if __name__ == '__main__':
         "conf_log": conf.logs,
         "db" : conf.redis.accounts.db
     }
+    db_conf_args = {
+        "name": "parser-cassandra",
+        "conf_db": conf.cassandra,
+        "conf_log": conf.logs
+    }
     cache = Cache.from_conf(**cache_conf_args)
-    Account.csv_to_cache(cache, conf.redis.accounts.file)
-    main(conf, cache_conf_args)
+    db = Database.from_conf(**db_conf_args)
+    Account.cassandra_to_cache(cache, db)
+    # Account.csv_to_cache(cache, conf.redis.accounts.file)
+    main(conf, cache_conf_args, db_conf_args)

@@ -21,6 +21,7 @@ Account.csv_to_cache(cache, file='accounts.csv')
 '''
 import json
 from dataclasses import dataclass
+from app.infrastructure import DatabaseTables
 import pandas as pd
 
 @dataclass
@@ -83,4 +84,12 @@ class Account:
         df = pd.read_csv(file)
         keys = df.pop("account_id")
         values = df[["bank_id", "user_id", "type"]].to_dict(orient="records")
+        cache.write_multiple(keys, values, is_dict=True)
+
+    @staticmethod
+    def cassandra_to_cache(cache, db):
+        res = db.execute(f"SELECT account_id, bank_id, user_id, type FROM {DatabaseTables.ACCOUNTS}")
+        df = pd.DataFrame(res)
+        keys = df.pop("account_id")
+        values = df.to_dict(orient="records")
         cache.write_multiple(keys, values, is_dict=True)
