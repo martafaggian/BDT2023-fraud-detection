@@ -2,14 +2,11 @@
 from __future__ import annotations
 import json
 from enum import Enum
-from omegaconf import OmegaConf
-from pyflink.datastream import StreamExecutionEnvironment, OutputTag
-from pyflink.datastream.functions import ProcessFunction, MapFunction
-from pyflink.datastream.connectors.cassandra import CassandraSink
+from pyflink.datastream.functions import MapFunction
 from pyflink.common.typeinfo import Types
 from pyflink.common.types import Row
-from app.infrastructure import Database, DatabaseTables, Cache, ConsumerFlink
-from app.model import Account, Transaction
+from app.infrastructure import Cache
+from app.model import Transaction
 
 
 class SourceTypes(str, Enum):
@@ -43,6 +40,12 @@ class Parser:
 
     def set_query(self, query):
         self.query = query
+
+    def get_target_types(self):
+        return self._target_types
+
+    def get_source_types(self):
+        return self._source_types
 
     @classmethod
     def get_types(cls, file: str):
