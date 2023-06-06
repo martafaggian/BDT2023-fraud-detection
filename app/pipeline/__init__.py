@@ -1,3 +1,4 @@
-__all__ = ['main']
+__all__ = ['main', 'parser', 'fraud_detection']
 
-from .main import Parser
+from .parser import Parser, SFDToTarget, SourceTypes
+from .fraud_detection import FraudDetection
