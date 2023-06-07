@@ -74,6 +74,8 @@ class Parser:
             return Types.FLOAT()
         elif type_str in ["floattuple"]:
             return Types.TUPLE([Types.FLOAT(), Types.FLOAT()])
+        elif type_str in ["date"]:
+            return Types.SQL_DATE()
         else:
             raise Exception(f"Unknown type {type_str}")
 
@@ -122,9 +124,8 @@ class SFDToTarget(MapFunction):
 
     @staticmethod
     def get_query():
-        query = Transaction.get_query_dict()
+        query = Transaction.get_query_dict(auto_id=True)
         query.update({
-            'transaction_id' : 'CAST(uuid() AS TEXT)',
             '"timestamp"' : 'toTimestamp(now())'
         })
         return query

@@ -48,16 +48,16 @@ parsers:
       file: ./parsers/target.json
 
 entities:
-  #- source:
-      #name: bank
-      #topics:
-        #- new-bank
-      #file: ./parsers/bank.json
-  #- source:
-      #name: user
-      #topics:
-        #- new-user
-      #file: ./parsers/user.json
+  - source:
+      name: bank
+      topics:
+        - new-bank
+      file: ./parsers/bank.json
+  - source:
+      name: user
+      topics:
+        - new-user
+      file: ./parsers/user.json
   - source:
       name: account
       topics:

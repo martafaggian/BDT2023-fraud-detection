@@ -5,6 +5,10 @@ cassandra:
   username: null
   password: null
 
+flink:
+  parser:
+    parallelism: 1
+
 kafka:
   host: localhost
   port: 9092
@@ -41,8 +45,24 @@ parsers:
       file: ./parsers/synthetic_financial_datasets.json
     target:
       name: target
-      #topic: parsed-synthetic_financial_datasets
       file: ./parsers/target.json
+
+entities:
+  - source:
+      name: bank
+      topics:
+        - new-bank
+      file: ./parsers/bank.json
+  - source:
+      name: user
+      topics:
+        - new-user
+      file: ./parsers/user.json
+  - source:
+      name: account
+      topics:
+        - new-account
+      file: ./parsers/account.json
 
 logs:
   dir: ./logs

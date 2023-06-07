@@ -6,7 +6,7 @@ from pyflink.datastream.connectors.cassandra import CassandraSink
 from pyflink.common.typeinfo import Types
 from pyflink.common.types import Row
 from app.infrastructure import Database, DatabaseTables, Cache, ConsumerFlink
-from app.model import Account
+from app.model import Account, User, Bank
 from app.pipeline import Parser
 
 class StreamEntities:
@@ -41,13 +41,13 @@ class StreamEntities:
         ## AUTH IS (apparently) NOT IMPLEMENTED!
         if econf.source.name == "user":
             dtype = DatabaseTables.USERS
-            qdict = {}
+            qdict = User.get_query_dict(auto_id=True)
         elif econf.source.name == "account":
             dtype = DatabaseTables.ACCOUNTS
-            qdict = Account.get_query_dict()
+            qdict = Account.get_query_dict(auto_id=True)
         elif econf.source.name == "bank":
             dtype = DatabaseTables.BANKS
-            qdict = {}
+            qdict = Bank.get_query_dict(auto_id=True)
         ##
         query = sink.get_insert_query(
             dtype,

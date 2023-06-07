@@ -29,7 +29,6 @@ class Account:
     '''
     Represents an account with associated attributes.
     '''
-    account_id: str
     user_id: str
     bank_id: str
     account_type: str = None
@@ -40,7 +39,6 @@ class Account:
         Convert an account object to a dictionary
         '''
         return {
-            'account_id': self.account_id,
             'user_id': self.user_id,
             'bank_id': self.bank_id,
             'type': self.account_type,
@@ -105,9 +103,10 @@ class Account:
         cache.write_multiple(keys, values, is_dict=True)
 
     @staticmethod
-    def get_query_dict():
+    def get_query_dict(auto_id = True):
+        acc_id = "CAST(uuid() AS TEXT)" if auto_id else "?"
         return {
-            'account_id' : '?',
+            'account_id' : acc_id,
             'bank_id' : '?',
             'user_id' : '?',
             'type' : '?',

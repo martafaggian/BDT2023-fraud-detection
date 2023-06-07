@@ -20,6 +20,7 @@ CREATE KEYSPACE IF NOT EXISTS fraud_detection
 --       to cast UUID types!
 --       It is sufficient to cast uuid to text:
 --       CAST(uuid() AS TEXT)
+-- NOTE2: DATE time is also not supported by flink connector :(
 -- ################## TRANSACTIONS ################## --
 
 CREATE TABLE IF NOT EXISTS fraud_detection.transactions (
@@ -110,7 +111,7 @@ CREATE TABLE IF NOT EXISTS fraud_detection.users(
     name TEXT,
     ssn TEXT,
     email TEXT,
-    birthdate DATE,
-    registration_date DATE,
+    birthdate TEXT,
+    registration_date TEXT,
     PRIMARY KEY (user_id)
 );

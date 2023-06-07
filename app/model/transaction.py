@@ -3,22 +3,13 @@ from datetime import datetime
 from enum import IntEnum
 import json
 
-class TransactionStatus(IntEnum):
-    PENDING = 0
-    COMPLETED = 1
-    FAILED = 2
-    CANCELED = 3
-
-class TransactionDirection(IntEnum):
-    INBOUND = 0
-    OUTBOUND = 1
-
 @dataclass
 class Transaction:
     @staticmethod
-    def get_query_dict():
+    def get_query_dict(auto_id = True):
+        trs_id = "CAST(uuid() AS TEXT)" if auto_id else "?"
         return {
-            'transaction_id' : '?',
+            'transaction_id' : trs_id,
             '"timestamp"' : '?',
             'user_id' : '?',
             'account_id' : '?',
@@ -37,6 +28,18 @@ class Transaction:
             'is_fraud' : '?',
             'fraud_confidence' : '?',
         }
+
+# TODO: model only if necessary to insert transactions by hand
+# class TransactionStatus(IntEnum):
+    # PENDING = 0
+    # COMPLETED = 1
+    # FAILED = 2
+    # CANCELED = 3
+
+# class TransactionDirection(IntEnum):
+    # INBOUND = 0
+    # OUTBOUND = 1
+
     # transaction_id: str = None
     # user_ID: str
     # account_ID: str
