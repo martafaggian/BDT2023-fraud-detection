@@ -1,20 +1,20 @@
 '''
-This code defines the Producer and Consumer classes for working with Kafka brokers. The Producer 
-class is responsible for sending messages to a broker, and the Consumer class is responsible for 
-retrieving messages from a broker. The code also includes a custom exception 
+This code defines the Producer and Consumer classes for working with Kafka brokers. The Producer
+class is responsible for sending messages to a broker, and the Consumer class is responsible for
+retrieving messages from a broker. The code also includes a custom exception
 BrokerNotConnectedException to handle cases where the broker connection fails.
-The Producer class uses the KafkaProducer class from the kafka library to establish a connection 
+The Producer class uses the KafkaProducer class from the kafka library to establish a connection
 to the Kafka broker. The send method is used to send a message to a specified topic.
-The Consumer class uses the KafkaConsumer class from the kafka library to connect to the Kafka 
-broker and retrieve messages. The retrieve method retrieves messages from the broker and prints 
+The Consumer class uses the KafkaConsumer class from the kafka library to connect to the Kafka
+broker and retrieve messages. The retrieve method retrieves messages from the broker and prints
 them.
 
-There are also ConsumerFlink and ProducerFlink classes that are specific to working with the 
-Flink Kafka connector. These classes use the FlinkKafkaConsumer and FlinkKafkaProducer classes 
+There are also ConsumerFlink and ProducerFlink classes that are specific to working with the
+Flink Kafka connector. These classes use the FlinkKafkaConsumer and FlinkKafkaProducer classes
 from the pyflink.datastream.connectors module.
 
-To use these classes, you would need to create an instance of the desired class and call the 
-appropriate methods. For example, to create a Producer instance and send a message, you can 
+To use these classes, you would need to create an instance of the desired class and call the
+appropriate methods. For example, to create a Producer instance and send a message, you can
 use the following code:
 producer = Producer(host='localhost', port=9092, logger=logger)
 producer.send('Hello, Kafka!', topic='my_topic')
@@ -31,6 +31,7 @@ from datetime import datetime
 from abc import ABC, abstractmethod
 from kafka import KafkaProducer, KafkaConsumer
 from kafka.errors import NoBrokersAvailable
+from kafka.admin import KafkaAdminClient, NewTopic
 from pyflink.datastream.connectors import FlinkKafkaConsumer, FlinkKafkaProducer
 from pyflink.datastream.formats.json import JsonRowDeserializationSchema, JsonRowSerializationSchema
 from app.utils import Logger
@@ -53,7 +54,7 @@ class BrokerNotConnectedException(Exception):
 class Broker(ABC):
     '''
     Abstract base class for brokers.
-    
+
     :param logger: the logger instance.
     :type logger: Logger
     :param host: The broker host.
@@ -76,7 +77,7 @@ class Broker(ABC):
     def is_connected(self):
         '''
         Check if the broker is connected.
-        
+
         :return: a boolean if connected
         '''
         return self._is_connected
@@ -111,7 +112,7 @@ class Broker(ABC):
 class Producer(Broker):
     '''
     Producer class for sending messages to a broker.
-    
+
     :param host: The broker host
     :type host: str
     :param port: The broker port
@@ -126,7 +127,7 @@ class Producer(Broker):
     def connect(self, retry_n=10, retry_sleep=5):
         '''
         Connect to the broker
-        
+
         :param retry_n: Number of retry attempts
         :type retry_n: int
         :param retry_sleep: Sleep time between retries in seconds
@@ -154,7 +155,7 @@ class Producer(Broker):
     def send(self, message, topic):
         '''
         Send a message to a topic.
-        
+
          :param message: The message to send.
          :type message: str
          :param topic: The topic to send the message to.
@@ -177,7 +178,7 @@ class Producer(Broker):
     def from_conf(name, conf_broker, conf_log):
         '''
         A static method that create a Producer instance from configuration settings.
-        
+
         :param name: The name of the producer.
         :type name: str
         :param conf_broker: The broker configuration dictionary
@@ -194,7 +195,7 @@ class Producer(Broker):
 class Consumer(Broker, ABC):
     '''
     Abstract base class for consumers.
-    
+
     :param host: The broker host
     :type host: str
     :param port: The broker port
@@ -224,7 +225,7 @@ class Consumer(Broker, ABC):
     def subscribe(self, topics):
         '''
         Subscribe to multiple topics.
-        :param topics: The topics to subscribe to 
+        :param topics: The topics to subscribe to
         :type topics: list
         '''
         self._broker.subscribe(topics)
@@ -253,7 +254,7 @@ class ConsumerPrint(Consumer):
 class ConsumerFlink(Broker):
     '''
     Consumer class for Flink and Kafka connector.
-    
+
     :param host: The broker host
     :type host: str
     :param port: the broker port
@@ -265,10 +266,23 @@ class ConsumerFlink(Broker):
     :param topics: The topics to consume
     :host topics: list
     '''
-    def __init__(self, host, port, logger, type_info, topics):
+    def __init__(self, host, port, logger, type_info, topics, num_partitions=1, replication_factor=1):
         super().__init__(host=host, port=port, logger=logger)
         self._type_info = type_info
         self._topics = topics
+        self._num_partitions = num_partitions
+        self._replication_factor = replication_factor
+        # Create topics if not exist
+        admin = KafkaAdminClient(
+            bootstrap_servers=f'{self._host}:{self._port}'
+        )
+        for topic in self._topics:
+            if topic not in admin.list_topics():
+                admin.create_topics([NewTopic(
+                    name=topic,
+                    num_partitions=self._num_partitions,
+                    replication_factor=self._replication_factor)])
+        #
         self._deserializer = JsonRowDeserializationSchema \
             .builder() \
             .type_info(type_info=self._type_info)\
@@ -300,7 +314,7 @@ class ConsumerFlink(Broker):
     def from_conf(name, conf_broker, conf_log, conf_parser, types):
         '''
         Create a ConsumerFlink instance from configuration settings.
-        
+
         :param name: The name of the consumer.
         :type name: str
         :param conf_broker: The broker configuration dictionary.
@@ -324,7 +338,7 @@ class ConsumerFlink(Broker):
 class ProducerFlink(Broker):
     '''
     Producer class for Flink Kafka connector
-    
+
     :param host: The broker host
     :type host: str
     :param port: the broker port
@@ -363,7 +377,7 @@ class ProducerFlink(Broker):
     def get_producer(self):
         '''
         Get the Flink Kafka Producer object
-        
+
         :return: The Flink Kafka Producer object
         '''
         return self._producer
@@ -372,7 +386,7 @@ class ProducerFlink(Broker):
     def from_conf(name, conf_broker, conf_log, conf_parser, types):
         '''
         Create a ProducerFlink instance from configuration setings.
-        
+
         :param name: The name of the producer.
         :type name: str
         :param conf_broker: The broker configuration dictionary.

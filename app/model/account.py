@@ -67,6 +67,16 @@ class Account:
         key = f"{keyprefix}{value.pop('account_id')}"
         cache.write(key, value, is_dict=True)
 
+    def submit(self, broker, topic):
+        '''
+        Submits the account object to the specified broker.
+        
+        :param broker: The broker to submit the data to
+        :type broker:
+        '''
+        # broker.send(self.to_json(), topic)
+        broker.send(self.to_dict(), topic)
+
     @staticmethod
     def csv_to_cache(cache, file):
         '''
@@ -93,3 +103,13 @@ class Account:
         keys = df.pop("account_id")
         values = df.to_dict(orient="records")
         cache.write_multiple(keys, values, is_dict=True)
+
+    @staticmethod
+    def get_query_dict():
+        return {
+            'account_id' : '?',
+            'bank_id' : '?',
+            'user_id' : '?',
+            'type' : '?',
+            'balance' : '?'
+        }

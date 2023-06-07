@@ -4,7 +4,9 @@ NB: flink requires all code in one single file!
 from omegaconf import OmegaConf
 from app.infrastructure import Database, Cache
 from app.model import Account
-from app.pipeline import StreamTransactions
+from app.pipeline import StreamTransactions, StreamEntities
+from kafka.admin import KafkaAdminClient, NewTopic
+
 
 if __name__ == '__main__':
     conf = OmegaConf.load("config.yaml")
@@ -21,7 +23,12 @@ if __name__ == '__main__':
     }
     cache = Cache.from_conf(**cache_conf_args)
     db = Database.from_conf(**db_conf_args)
+    #
     Account.cassandra_to_cache(cache, db)
     # Account.csv_to_cache(cache, conf.redis.accounts.file)
+    #
     stream_transactions = StreamTransactions(conf, cache_conf_args, db_conf_args)
     stream_transactions.submit_all()
+    #
+    stream_entities = StreamEntities(conf, db_conf_args)
+    stream_entities.submit_all()
