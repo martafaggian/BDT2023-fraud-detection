@@ -1,11 +1,11 @@
 '''
-The code represents a Streamer class that is used for streaming data from a CSV file and 
-producing messages to a Kafka topic. It has methods for enabling, disabling, and interrupting 
-the streamer, as well as methods for checking the status of the streamer. The stream method 
-starts streaming data from the CSV file and continuously produces messages to the Kafka topic 
+The code represents a Streamer class that is used for streaming data from a CSV file and
+producing messages to a Kafka topic. It has methods for enabling, disabling, and interrupting
+the streamer, as well as methods for checking the status of the streamer. The stream method
+starts streaming data from the CSV file and continuously produces messages to the Kafka topic
 until interrupted.
 
-The class also includes a static method from_conf that creates a Streamer object based on 
+The class also includes a static method from_conf that creates a Streamer object based on
 the provided configurations. It uses the configurations for the logger, cache, Kafka broker,
 and streamer itself to initialize the Streamer object.
 
@@ -44,7 +44,7 @@ class Streamer:
     '''
     A class representing a streamer that reads data from a CSV file and sends it to a Kafka
     topic using a producer.
-    
+
     :param producer: The Kafka object
     :type producer: Producer
     :param logger: The logger object for logging
@@ -59,7 +59,7 @@ class Streamer:
     :type producer_topic: str
     :param messages_per_second: The number of messages to send per second
     :type messages_per_second: int
-    :param sleep_disabled: The number of seconds to sleep if the streamer is disabled 
+    :param sleep_disabled: The number of seconds to sleep if the streamer is disabled
     :type sleep_disabled: int
     :param init_status: The initial status of the streamer
     :type init_status: StreamerStatus
@@ -90,7 +90,7 @@ class Streamer:
     def get_status(self):
         '''
         Get the current status of the streamer.
-        
+
         :return: The current status of the streamer
         '''
         return int(self.cache.read(self.cache_key))
@@ -98,7 +98,7 @@ class Streamer:
     def set_status(self, status):
         '''
         Set the status of the streamer
-        
+
         :param status: The status to set
         :type key: StreamerStatus
         '''
@@ -142,7 +142,7 @@ class Streamer:
     def is_enabled(self):
         '''
         Check if the streamer is enabled
-        
+
         :return: True if the streamer is disabled. False otherwise
         '''
         return self.get_status() == StreamerStatus.ENABLED
@@ -150,16 +150,16 @@ class Streamer:
     def is_disabled(self):
         '''
         Check if the streamer is disabled
-        
+
         :return: True if the streamer is disabled. False otherwise.
-        
+
         '''
         return self.get_status() == StreamerStatus.DISABLED
 
     def is_interrupted(self):
         '''
         Check if the streamer is interrupted.
-        
+
         :return: True if the streamer is interrupted, False otherwise.
         '''
         return self.get_status() == StreamerStatus.INTERRUPTED
@@ -189,17 +189,17 @@ class Streamer:
     def from_conf(conf_stream, conf_log, conf_broker, conf_cache):
         '''
         Create a Streamer object based on the provided configurations.
-        
+
         :param conf_stream: The configuration for the streamer
-        :type conf_stream: 
+        :type conf_stream:
         :param conf_log: The configuration for the logger
         :type conf_log:
         :param conf_broker: The configuration for the Kafka broker
         :type conf_broker:
         :param conf_cache:The configuration for the Cache
         :type conf_cache:
-        :return: The created Streamer object 
-        
+        :return: The created Streamer object
+
         '''
         logger = Logger.from_conf(conf_stream.name, conf_log)
         cache = Cache.from_conf(
