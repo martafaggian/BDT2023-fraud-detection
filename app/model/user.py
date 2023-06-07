@@ -48,6 +48,9 @@ class User:
         })
         broker.send(msg, topic)
 
+    def __str__(self):
+        return f"User(email={self.email}, name={self.name}, ssn={self.ssn}, registration_date={self.registration_date}, birthdate={self.birthdate})"
+
     @staticmethod
     def get_query_dict(auto_id = True):
         usr_id = "CAST(uuid() AS TEXT)" if auto_id else "?"

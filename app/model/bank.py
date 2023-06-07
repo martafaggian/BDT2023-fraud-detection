@@ -39,6 +39,9 @@ class Bank:
         # broker.send(self.to_json(), topic)
         broker.send(self.to_dict(), topic)
 
+    def __str__(self):
+        return f"Bank(name={self.name}, address={self.address}, phone={self.phone})"
+
     @staticmethod
     def get_query_dict(auto_id = True):
         bnk_id = "CAST(uuid() AS TEXT)" if auto_id else "?"

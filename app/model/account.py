@@ -75,6 +75,9 @@ class Account:
         # broker.send(self.to_json(), topic)
         broker.send(self.to_dict(), topic)
 
+    def __str__(self):
+        return f"Account(user_id={self.user_id}, bank_id={self.bank_id}, account_type={self.account_type}, balance={self.balance})"
+
     @staticmethod
     def csv_to_cache(cache, file):
         '''
