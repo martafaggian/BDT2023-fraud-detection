@@ -1,3 +1,7 @@
+'''
+
+'''
+
 import argparse
 import json
 import inquirer as iq
@@ -6,6 +10,12 @@ from app.infrastructure import Producer
 from app.model import Account, Bank, User
 
 def load_source(file):
+    '''
+    Load the JSON data from a file.
+    
+    :param file: The path to the JSON file
+    :type file: str
+    '''
     with open(file, 'r') as f:
         model = json.load(f)
     return model
