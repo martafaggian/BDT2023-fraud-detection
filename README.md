@@ -6,7 +6,11 @@
 
 ## Streamers
 
+![kafka demo](./img/kafka_ui.png)
+
 ## Pipeline
+
+![flink demo](./img/flink_dash.png)
 
 ## Data Modeling
 
