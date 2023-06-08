@@ -2,9 +2,17 @@
 
 ## Introduction
 
+## Streamers
+
 ## Pipeline
 
 ## Data Modeling
+
+## Database
+
+### Add entities
+
+![add entities demo](./img/insert_bank.gif)
 
 ## Visualization
 
