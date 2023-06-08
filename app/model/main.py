@@ -1,5 +1,8 @@
 '''
-
+The purpose of this code is to provide an interactive command-line interface for creating and 
+submitting entities (User, Account, Bank) based on user input. It loads the entity structure 
+from JSON files, prompts the user to input values for the entity attributes, and submits the 
+entity to the corresponding Kafka topic using a Producer.
 '''
 
 import argparse
@@ -21,9 +24,22 @@ def load_source(file):
     return model
 
 def isnumber(answers, current):
+    '''
+    Validate if the user's input is a number.
+    
+    :param answer: The answer collected by the prompt 
+    :param current: The current answer being validated 
+    :return: True if the input is a number, false otherwise.
+    '''
     return current.isnumeric()
 
 def get_entity(model):
+    '''
+    Prompt the user to input values for creating an entity based on the given model.
+    
+    :param model: The model specifying the entity structure
+    :param type: dict
+    '''
     questions = []
     #
     validate = {
@@ -47,6 +63,11 @@ def get_entity(model):
     return entity
 
 def main(conf):
+    '''
+    Main function to interactively create a submit entities.
+    
+    :param conf: The configuration object
+    '''
     questions = [
         iq.List(
             'entity',
