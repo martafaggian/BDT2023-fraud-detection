@@ -36,13 +36,13 @@ pip install -r requirements.txt
 
 ![kafka demo](./img/kafka_ui.png)
 
-## Pipeline
+## Data Processing
 
 ![flink demo](./img/flink_dash.png)
 
 ## Data Modeling
 
-The data modeling flow followed the instructions proposed by
+The data modeling process was performed by following the indications proposed by
 [cassandra](https://cassandra.apache.org/doc/latest/cassandra/data_modeling.html) for a correct modeling of the data structure.
 > **Warning**
 > data modeling for cassandra requires a **query oriented** approach, different from the typical relational data modeling.
@@ -54,6 +54,8 @@ Overall, the data modeling workflow is:
 4. Derive a [physical model](#physical-model) from the logical
 
 ### Conceptual Model
+
+The conceptual model aims at defining the entities 
 ![conceptual model](img/1_conceptual_model.drawio.png)
 
 ### Query Model
@@ -112,9 +114,9 @@ Overall, the data modeling workflow is:
 
 ![grafana demo](./img/grafana.gif)
 
-## Services
+## Interfaces
 
-The following services can be accessed:
+The following interfaces can be accessed:
 * **Grafana Dashboard**: localhost:**3000**
 * **Flink Dashboard**: localhost:**8081**
 * **Kafka-UI**: localhost:**8080**
