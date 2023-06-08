@@ -24,26 +24,33 @@ The data modeling flow followed the instructions proposed by
 
 #### User Stories
 
-* As a user, i want to see my details
-* As a user, i want to see the details of my accounts
-* As a user, i want to see all my transactions
-* As a user, i want to see the transactions of one of my accounts
-* As a user, i want to see if there are some anomalous transactions
-* As a user, i want to see the details of the transactions
+* As a user, I want to see:
+    * my details
+    * the details of my accounts
+    * all my transactions
+    * the transactions of one of my accounts
+    * if there are some anomalous transactions
+    * the details of the transactions
 
-* As a bank, i want to see my details
-* As a bank, i want to see the details of the accounts
-* As a bank, i want to see the details of the users
-* As a bank, i want to see all transactions of the bank
-* As a bank, i want to see the details of the transactions
-* As a bank, i want to see all transactions of a user
-* As a bank, i want to see all transactions of an account
-* As a bank, i want to see all the fraudulent transactions
+----
 
-* As the fraud detector system, i want to see all transactions available
-* As the fraud detector system, i want to see all transactions of a user
-* As the fraud detector system, i want to see all transactions of an account
+* As a bank, I want to see:
+    * my details
+    * the details of the accounts
+    * the details of the users
+    * all transactions of the bank
+    * the details of the transactions
+    * all transactions of a user
+    * all transactions of an account
+    * all the fraudulent transactions
 
+----
+
+* As the fraud detector system, I want to see:
+    * all transactions available
+    * all transactions of a user
+    * all transactions of an account
+    
 #### Final Query Model
 
 ![query model](img/2_query_model.drawio.png)
