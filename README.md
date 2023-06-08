@@ -14,6 +14,53 @@
 
 ## Data Modeling
 
+The data modeling flow followed the instructions proposed by
+[cassandra](https://cassandra.apache.org/doc/latest/cassandra/data_modeling.html)
+
+### Conceptual Model
+![conceptual model](img/1_conceptual_model.drawio.png)
+
+### Query Model
+
+#### User Stories
+
+* As a user, i want to see my details
+* As a user, i want to see the details of my accounts
+* As a user, i want to see all my transactions
+* As a user, i want to see the transactions of one of my accounts
+* As a user, i want to see if there are some anomalous transactions
+* As a user, i want to see the details of the transactions
+
+* As a bank, i want to see my details
+* As a bank, i want to see the details of the accounts
+* As a bank, i want to see the details of the users
+* As a bank, i want to see all transactions of the bank
+* As a bank, i want to see the details of the transactions
+* As a bank, i want to see all transactions of a user
+* As a bank, i want to see all transactions of an account
+* As a bank, i want to see all the fraudulent transactions
+
+* As the fraud detector system, i want to see all transactions available
+* As the fraud detector system, i want to see all transactions of a user
+* As the fraud detector system, i want to see all transactions of an account
+
+#### Final Query Model
+
+![query model](img/2_query_model.drawio.png)
+
+### Logical Model
+
+![logical model](img/3_logical_model.drawio.png)
+
+### Physical Model
+
+![physical model](img/4_physical_model.drawio.png)
+
+Note: a further refinement of the physical model is usually needed in
+order to define possible bucketing and partitioning techniques based
+on the estimated data flow.
+For more information, see [here](https://cassandra.apache.org/doc/latest/cassandra/data_modeling/data_modeling_refining.html)
+
 ## Database
 
 ### Add entities
