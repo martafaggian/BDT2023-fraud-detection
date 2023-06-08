@@ -1,6 +1,8 @@
-"""
-NB: flink requires all code in one single file!
-"""
+'''
+This code snippet is the main entry point for executing the streaming 
+processes for transactions and entities using Apache Flink.
+'''
+
 from omegaconf import OmegaConf
 from app.infrastructure import Database, Cache
 from app.model import Account
@@ -23,12 +25,12 @@ if __name__ == '__main__':
     }
     cache = Cache.from_conf(**cache_conf_args)
     db = Database.from_conf(**db_conf_args)
-    #
+    # Transfer account data from Cassandra to cache
     Account.cassandra_to_cache(cache, db)
     # Account.csv_to_cache(cache, conf.redis.accounts.file)
-    #
+    #Start streaming transactions
     stream_transactions = StreamTransactions(conf, cache_conf_args, db_conf_args)
     stream_transactions.submit_all()
-    #
+    #Start streaming entities
     stream_entities = StreamEntities(conf, db_conf_args)
     stream_entities.submit_all()
