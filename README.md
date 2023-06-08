@@ -15,7 +15,15 @@
 ## Data Modeling
 
 The data modeling flow followed the instructions proposed by
-[cassandra](https://cassandra.apache.org/doc/latest/cassandra/data_modeling.html)
+[cassandra](https://cassandra.apache.org/doc/latest/cassandra/data_modeling.html) for a correct modeling of the data structure.
+> **Warning**
+> data modeling for cassandra requires a **query oriented** approach, different from the typical relational data modeling.
+
+Overall, the data modeling workflow is:
+1. Define a [conceptual model](#conceptual-model)
+2. Define a [query model](#query-model)
+3. Merge conceptual and query models into a [logical model](#logical-model)
+4. Derive a [physical model](#physical-model) from the logical
 
 ### Conceptual Model
 ![conceptual model](img/1_conceptual_model.drawio.png)
@@ -63,10 +71,8 @@ The data modeling flow followed the instructions proposed by
 
 ![physical model](img/4_physical_model.png)
 
-Note: a further refinement of the physical model is usually needed in
-order to define possible bucketing and partitioning techniques based
-on the estimated data flow.
-For more information, see [here](https://cassandra.apache.org/doc/latest/cassandra/data_modeling/data_modeling_refining.html)
+> **Warning**
+> a further refinement of the physical model is usually needed in order to define possible bucketing and partitioning techniques based on the estimated data flow. Being this project a prototype, this step has been neglected. For more information, see [here](https://cassandra.apache.org/doc/latest/cassandra/data_modeling/data_modeling_refining.html)
 
 ## Database
 
