@@ -7,7 +7,7 @@
  ┃ ┗ 📜__init__.py <br />
  ┣ 📂MODEL <br />
  ┃ ┣ 📜account.py <br />
- ┃ ┣ 📜bank.py
+ ┃ ┣ 📜bank.py <br />
  ┃ ┣ 📜main.py <br />
  ┃ ┣ 📜transaction.py <br />
  ┃ ┣ 📜user.py <br />
