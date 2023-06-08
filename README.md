@@ -2,7 +2,7 @@
 
 ## Introduction
 
-![workflow demo](./img/workflow.gif)
+<!--![workflow demo](./img/workflow.gif)-->
 
 ## Streamers
 
