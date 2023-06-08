@@ -1,4 +1,8 @@
+'''
+This code provides a parser for transforming data from a source format to a target format using Apache Flink.
+It includes the `Parser` class that handles the conversion process and the `SFDToTarget` class that performs the mapping from synthetic financial datasets (SFD) to the target format.
 
+'''
 from __future__ import annotations
 import json
 from enum import Enum
@@ -15,6 +19,19 @@ class SourceTypes(str, Enum):
 
 
 class Parser:
+    '''
+    The `Parser` class handles the conversion of data from a source format to a target format.
+    
+    :param source: The source type
+    :type source: str
+    :param target: The target type
+    :type target: str
+    :param source_parser_file_path: File path for the source parser definition
+    :type source_parser_file_path: str
+    :param target_parser_file_path: File path for the target parser definition
+    :type target_parser_file_path: str 
+    
+    '''
     def __init__(
         self,
         source: str,
@@ -36,19 +53,46 @@ class Parser:
             raise NotImplementedError(f"Parser from {self._source} to {self._target} not implemented")
 
     def get_query(self):
+        '''
+        Get the query associated with the parser
+        
+        :return: The query dict
+        '''
         return self.query
 
     def set_query(self, query):
+        '''
+        Set the query for the parser
+        
+        :param query: The query to set 
+        '''
         self.query = query
 
     def get_target_types(self):
+        '''
+        Get the target types.
+        
+        :return: The target types
+        '''
         return self._target_types
 
     def get_source_types(self):
+        '''
+        Get the source types.
+        
+        :return: The source types
+        '''
         return self._source_types
 
     @classmethod
     def get_types(cls, file: str):
+        '''
+        Read and convert the types from a file.
+        
+        :param file: The file path
+        :type file: str
+        :return The converted types
+        '''
         with open(file) as f:
             types = json.load(f)
         converted = {}
@@ -61,6 +105,13 @@ class Parser:
 
     @classmethod
     def convert_types(cls, type_str: str) -> Types:
+        '''
+        Convert type strings to corresponding Flink types.
+        
+        :param type_str: The type string
+        :type param: type_str
+        :return: The converted Flink type
+        '''
         type_str = type_str.lower().strip()
         if type_str in ["string", "text"]:
             return Types.STRING()
@@ -81,11 +132,22 @@ class Parser:
 
 
 class SFDToTarget(MapFunction):
+    '''
+    The `SFDToTarget` class performs the mapping from synthetic financial datasets (SFD) to the target format.
+    
+    :param cache_conf_args: Configuration arguments for the cache
+    '''
     def __init__(self, cache_conf_args):
         super().__init__()
         self._cache_conf_args = cache_conf_args
 
     def map(self, record):
+        '''
+        Map the input record to the target format.
+        
+        :param record: The input record
+        :return: The transformed record in the target format
+        '''
         # Declaration must be internal due to Flink contraints!
         cache = Cache.from_conf(**self._cache_conf_args)
         #
@@ -124,6 +186,11 @@ class SFDToTarget(MapFunction):
 
     @staticmethod
     def get_query():
+        '''
+        Get the query dictionary for the target format.
+        
+        :return: The query dictionary.
+        '''
         query = Transaction.get_query_dict(auto_id=True)
         query.update({
             '"timestamp"' : 'toTimestamp(now())'
