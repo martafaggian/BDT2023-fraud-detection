@@ -19,6 +19,8 @@ Afterwards, it is sufficient to run:
 ./start.sh
 ```
 
+The most critical parameters can be set via the proposed [config.yaml](config.yaml) file. 
+
 ### Prerequirements
 
 * docker
@@ -34,7 +36,41 @@ pip install -r requirements.txt
 
 ## 2. Streamers
 
+In order to simulate a possible real case of real-time transactions, several streaming utilities have been included.
+The concept is to add an input source (like the ones proposed in the introduction section) and stream all the data to a kafka broker, defined in the config file.
+As multiple sources can be present, a streams manager is included, which will handle the different streamers using multiple threads.
+
 ![kafka demo](./img/kafka_ui.png)
+
+The source format is not relevant, as the system was designed to provide several parsers with the aim of convert the source formats to the target one.
+Parsers are part of the [flink pipeline](#data-processing).
+Each streamer stores its status (active, enabled, interrupted) in a redis cache.
+Useful commands for handling the streamers are:
+
+```sh
+./stream_start.sh # Start streamers when interrupt/at the first run
+```
+```sh
+./stream_disable.sh # Disable streamers but keep running.
+```
+```sh
+./stream_enable.sh # Enable streamers.
+```
+```sh
+./stream_interrupt.sh # Interrupt all streamers. Requires a new start afterwards.
+```
+
+A configuration example is the following:
+
+```yaml
+ streamers:
+  - name: streamer1 # Streamer name
+    file: ./data/synthetic_financial_datasets.csv # Source file to stream
+    topic: raw-streamer1 # Target Kafka topic for publishing the messages
+    status_key: streamer1.active # Streamer status key in the redis cache
+    messages_per_second: 1 # How many messages should be sent per second
+    sleep_disabled: 10 # How much time to wait for checking the status when disabled
+```
 
 ## 3. Data Processing
 
