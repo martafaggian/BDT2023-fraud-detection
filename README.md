@@ -1,5 +1,27 @@
 # BTD2023-fraud-detection
 
+## Initial setup
+
+The workflow requires an initial data sources location in the path:
+```
+./data/sources
+```
+The sources zip can be downloaded [here](https://drive.google.com/file/d/13Po01RVLYdbDWWEvDPSfqElstoX_aX1g/view?usp=sharing).
+
+Afterwards, it is sufficient to run:
+```sh
+./start.sh
+```
+
+### Prerequirements
+
+* docker
+* python 3.10
+```
+pip install -r requirements.txt
+```
+> **Warning** for systems with less than 8GB of RAM, it is recommended to run only one cassandra node and set parallel processes of flink to 1. 
+
 ## Introduction
 
 ![workflow demo](./img/workflow.gif)
@@ -83,6 +105,13 @@ Overall, the data modeling workflow is:
 ## Visualization
 
 ![grafana demo](./img/grafana.gif)
+
+## Services
+
+The following services can be accessed:
+* **Grafana Dashboard**: localhost:**3000**
+* **Flink Dashboard**: localhost:**8081**
+* **Kafka-UI**: localhost:**8080**
 
 ## TODOs
 
