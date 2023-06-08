@@ -6,7 +6,13 @@ The workflow requires an initial data sources location in the path:
 ```
 ./data/sources
 ```
+And some flink libraries in:
+```
+./lib
+```
+
 The sources zip can be downloaded [here](https://drive.google.com/file/d/13Po01RVLYdbDWWEvDPSfqElstoX_aX1g/view?usp=sharing).
+The lib zip can be downloaded[here](https://drive.google.com/file/d/1cBIjjZTNSo9UqNsf9Hq3LvYaWSyWuvoz/view?usp=drive_link)
 
 Afterwards, it is sufficient to run:
 ```sh
@@ -116,6 +122,7 @@ The following services can be accessed:
 ## TODOs
 
 ### General
+- [ ] Auto download libs from gdrive with gdown
 - [ ] Write README.md
 - [x] Dockerize the software
 - [ ] Write documentation
