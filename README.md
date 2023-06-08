@@ -37,7 +37,7 @@
     - [ ] Better-refine fraud-detection algorithms
         - [ ] Integrate Benford-Law for fraud detection
 - [ ] Use redis as intermediate persistance layer
-    - (Py)Flink missing redis connector --> not possible
+    - (Py)Flink missing redis connector
 - [x] Update account balances real-time
 
 ### Database
