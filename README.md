@@ -2,6 +2,8 @@
 
 ## Introduction
 
+![workflow demo](./img/workflow.gif)
+
 ## Streamers
 
 ## Pipeline
