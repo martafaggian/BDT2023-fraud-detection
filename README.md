@@ -1,5 +1,5 @@
 # BTD2023-fraud-detection 
-📦APP <br />
+📦APP <br /> bla bla bla bla bla bla bla bla bla <br />
  ┣ 📂infrastructure <br />
  ┃ ┣ 📜broker.py <br />
  ┃ ┣ 📜cache.py <br />
@@ -21,7 +21,7 @@
  ┃ ┣ 📜stream_transactions.py <br />
  ┃ ┗ 📜__init__.py <br />
  ┣ 📂STREAM <br />
- ┃ ┣ 📜Dockerfile
+ ┃ ┣ 📜Dockerfile <br />
  ┃ ┣ 📜main.py <br />
  ┃ ┣ 📜streamer.py <br />
  ┃ ┣ 📜streamers_manager.py <br />
