@@ -16,6 +16,8 @@
 
 ## Visualization
 
+![grafana demo](./img/grafana.gif)
+
 ## TODOs
 
 ### General
