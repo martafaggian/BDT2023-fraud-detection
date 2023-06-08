@@ -1,3 +1,44 @@
+'''
+The Transaction class is a data class representing a transaction. 
+It has various attributes representing different properties of a transaction. 
+
+    :param transaction_id: The ID of the transaction.
+    :type transaction_id: str
+    :param timestamp: The timestamp of the transaction.
+    :type timestamp: datetime
+    :param user_id: The ID of the user associated with the transaction.
+    :type user_id: str
+    :param account_id: The ID of the account associated with the transaction.
+    :type account_id: str
+    :param bank_id: The ID of the bank associated with the transaction.
+    :type bank_id: str
+    :param balance_before: The balance before the transaction.
+    :type balance_before: float
+    :param balance_after: The balance after the transaction.
+    :type balance_after: float
+    :param account_type: The type of the account.
+    :type account_type: str
+    :param counterparty_account_id: The ID of the counterparty account.
+    :type counterparty_account_id: str
+    :param counterparty_isinternal: Indicates if the counterparty is internal or external.
+    :type counterparty_isinternal: status: boo
+    :param counterparty_type: The type of the counterparty
+    :type counterparty_type: str
+    :param counterparty_name: The name of the counterparty.
+    :type counterparty_name: str
+    :param amount: The amount of the transaction.
+    :type amount: float
+    :param direction: The direction of the transaction (inbound or outbound).
+    :type direction: str
+    :param status: The status of the transaction.
+    :type status: str
+    :param source_location: The source location of the transaction.
+    :type source_location: str
+    :param is_fraud: Indicates if the transaction is a fraud.
+    :type is_fraud: bool
+    :param fraud_confidence: The confidence level of the fraud detection.
+    :type fraud_confidence: float
+'''
 from dataclasses import dataclass
 from datetime import datetime
 from enum import IntEnum
@@ -5,8 +46,18 @@ import json
 
 @dataclass
 class Transaction:
+    '''
+    Data class representing a transaction.
+    '''
     @staticmethod
     def get_query_dict(auto_id = True):
+        '''
+         Get a dictionary representation of the transaction attributes for database queries.
+         
+         :param auto_id: Indicates if the transaction ID should be automatically generated
+         :type auto_id: bool
+         :return: The dictionary representing the transaction attributes for database queries.
+        '''
         trs_id = "CAST(uuid() AS TEXT)" if auto_id else "?"
         return {
             'transaction_id' : trs_id,
