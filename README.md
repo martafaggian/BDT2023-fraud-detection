@@ -61,7 +61,7 @@ The data modeling flow followed the instructions proposed by
 
 ### Physical Model
 
-![physical model](img/4_physical_model.drawio.png)
+![physical model](img/4_physical_model.png)
 
 Note: a further refinement of the physical model is usually needed in
 order to define possible bucketing and partitioning techniques based
