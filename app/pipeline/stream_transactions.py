@@ -1,3 +1,11 @@
+'''
+The provided code defines a class called "StreamTransactions" that handles streaming of 
+transactions using Apache Flink. It integrates with components such as Kafka, Cassandra, 
+and the application's infrastructure. It includes a process function called "StreamSplitter" 
+and utilizes a parser and fraud detection for processing the transactions.
+
+'''
+
 from __future__ import annotations
 from omegaconf import OmegaConf
 from pyflink.datastream import StreamExecutionEnvironment, OutputTag
@@ -30,11 +38,27 @@ class StreamTransactions:
         cache_conf_args,
         db_conf_args
     ):
+        '''
+        Initializes the StreamTransactions object with the provided configurations, 
+        cache connection arguments, and database connection arguments
+        
+        :param conf: Configuration object containing various settings for the streaming process.
+        :param cache_conf_args: Cache connection arguments required to establish a connection to the cache.
+        :param db_conf_args: Database connection arguments required to establish a connection to the database.
+        '''
         self.conf = conf
         self.cache_conf_args = cache_conf_args
         self.db_conf_args = db_conf_args
 
     def execute_env(self, pconf, procs=2):
+        '''
+        Executes the streaming environment for a specific transaction processing configuration.
+        
+        :param pconf: Configuration object for transaction processing containing settings related 
+                      to the transaction source, target, and parsing.
+        :param procs: The parallelism degree for the streaming environment
+        '''
+        #Create a  Kafka consumer
         source = ConsumerFlink.from_conf(
             name=f"flink-{pconf.source.name}",
             conf_broker=self.conf.kafka,
@@ -42,11 +66,11 @@ class StreamTransactions:
             conf_parser=pconf,
             types = Parser.get_types(pconf.source.file)
         )
-        #
+        # Creates a database sink
         sink = Database.from_conf(**self.db_conf_args)
-        #
+        # Retrieve the Kafka consumer
         consumer = source.get_consumer()
-        #
+        # Create a Parser object
         parser = Parser(
             source = pconf.source.name,
             target = pconf.target.name,
@@ -94,6 +118,9 @@ class StreamTransactions:
         env.execute(f"Parser {pconf.source.name} -> {pconf.target.name} + AD + Account balance update")
 
     def submit_all(self):
+        '''
+        Submits the streaming process for all transaction processing configurations defined in the configuration.
+        '''
         procs = self.conf.flink.parser.parallelism
         for pconf in self.conf.parsers:
             self.execute_env(pconf, procs)
