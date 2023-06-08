@@ -7,7 +7,7 @@ from app.infrastructure import DatabaseTables
 @dataclass
 class User:
     '''
-    Represents an account with associated attributes.
+    Represents an user with associated attributes.
     '''
     email: str
     name: str
@@ -17,7 +17,7 @@ class User:
 
     def to_dict(self):
         '''
-        Convert an account object to a dictionary
+        Convert an user object to a dictionary
         '''
         return {
             'email': self.email,
@@ -29,13 +29,13 @@ class User:
 
     def to_json(self):
         '''
-        Converts the Account object to a JSON string.
+        Converts the user object to a JSON string.
         '''
         return json.dumps(self.to_dict())
 
     def submit(self, broker, topic):
         '''
-        Submits the account object to the specified broker.
+        Submits the user object to the specified broker.
 
         :param broker: The broker to submit the data to
         :type broker:
