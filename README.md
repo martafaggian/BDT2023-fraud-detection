@@ -11,12 +11,12 @@
  ┃ ┣ 📜main.py <br />
  ┃ ┣ 📜transaction.py <br />
  ┃ ┣ 📜user.py <br />
- ┃ ┗ 📜__init__.py
+ ┃ ┗ 📜__init__.py <br />
  ┣ 📂PIPELINE <br />
  ┃ ┣ 📜Dockerfile <br />
  ┃ ┣ 📜fraud_detection.py <br />
  ┃ ┣ 📜main.py <br />
- ┃ ┣ 📜parser.py
+ ┃ ┣ 📜parser.py <br />
  ┃ ┣ 📜stream_entities.py <br />
  ┃ ┣ 📜stream_transactions.py <br />
  ┃ ┗ 📜__init__.py <br />
