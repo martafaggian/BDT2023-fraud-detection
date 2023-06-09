@@ -88,6 +88,13 @@ pip install -r requirements.txt
   📂**UTILS** <br />
   ┣ 📜logger.py <br />
   ┗ 📜__init__.py <br />
+  
+* The **WEBAPP** folder contains three Python files built on Dash and Flask frameworks that provide the elements for a demo WebApp to check whether the transactions are fraudulent or not.  The "app1.py" displays the homepage of the prototype named **DetectiveFraud**. The "app2.py" presents the hypothetical *User* portal after credential submission in the homepage. The "app3.py" provides the framework for checking the transactions based on the *User ID*, in case the *User* does not remember its credentials.  <br />
+
+  📂**WEBAPP** <br />   
+  ┣ 📜app1.py <br /> 
+  ┣ 📜app2.py <br />
+  ┗ 📜app3.py <br />
 
 > **Note** A more detailed documentation is provided in the code.
 
