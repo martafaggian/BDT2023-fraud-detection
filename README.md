@@ -329,7 +329,7 @@ entities:
 ## 5. Database
 
 By default, the cassandra cluster is created with 3 nodes from the docker compose.
-The default database schema is depicted in section (#24-physical-model).
+The default database schema is depicted in [Section 2.4](#24-physical-model).
 
 ### 5.1. Add entities
 
