@@ -11,12 +11,6 @@ streamers to the manager and provides methods to start all streamers in separate
 enable/disable all streamers collectively, and interrupt all streamers by stopping their
 execution and joining their threads.
 
-The purpose of this code is to provide a framework for managing and controlling multiple
-streamers for data streaming tasks. It allows for simultaneous execution of multiple streamers,
-enabling/disabling them as needed, and handling their interruption gracefully. The code can be
-used as a foundation for building more complex streaming applications or systems that involve
-multiple streamers working together
-
 The module can be used as follow:
 logger = Logger()
 

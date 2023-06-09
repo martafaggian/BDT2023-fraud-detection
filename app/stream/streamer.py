@@ -125,7 +125,7 @@ class Streamer:
 
     def disable(self):
         '''
-        Disabel the streamer
+        Disable the streamer
         '''
         self.set_status(StreamerStatus.DISABLED)
         self.print_status()
