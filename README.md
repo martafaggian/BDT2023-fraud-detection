@@ -232,6 +232,8 @@ The insertion process will be entirely guided.
 
 ## 6. Visualization
 
+The final visualization consists in a grafana dashboard with several panels showing statistics, primarly grouped by different banks:
+
 ![grafana demo](./img/grafana.gif)
 
 ## Interfaces
@@ -240,6 +242,8 @@ The following interfaces can be accessed:
 * **Grafana Dashboard**: localhost:**3000**
 * **Flink Dashboard**: localhost:**8081**
 * **Kafka-UI**: localhost:**8080**
+
+More services and relative ports can be found in the docker compose file. 
 
 ## TODOs
 
