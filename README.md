@@ -1,5 +1,14 @@
 # BTD2023-fraud-detection
 
+## Live Demo
+
+For navigating the live demo (final [grafana dashboard](#visualization)), you can visit:
+> URL: **[bdt.davidecalza.com](https://bdt.davidecalza.com)**
+> <br />User: **guest**
+> <br />Password: **BDT2023**
+
+> **Warning** due to recently frequent disconnections from my ISP, the website may not be always reachable, since DNS cache takes some minutes to refresh after a change of my server's public IP. 
+
 ## Initial setup
 
 The workflow requires an initial data sources location in the path:
