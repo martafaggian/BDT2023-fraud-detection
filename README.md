@@ -92,12 +92,15 @@ pip install -r requirements.txt
   ┣ 📜logger.py <br />
   ┗ 📜__init__.py <br />
   
-* The **WEBAPP** folder contains three Python files built on Dash and Flask frameworks that provide the elements for a demo WebApp to check whether the transactions are fraudulent or not.  The "app1.py" displays the homepage of the prototype named **DetectiveFraud**. The "app2.py" presents the hypothetical *User* portal after credential submission in the homepage. The "app3.py" provides the framework for checking the transactions based on the *User ID*, in case the *User* does not remember its credentials.  <br />
+* The **web** folder contains three Python files built on Dash and Flask frameworks that provide the elements for a user-oriented demo WebApp to check whether the transactions are fraudulent or not.  <br />
 
-  📂**WEBAPP** <br />   
+  📂**web**  
+  ┣ 📜Dockerfile <br />
   ┣ 📜app1.py <br /> 
   ┣ 📜app2.py <br />
-  ┗ 📜app3.py <br />
+  ┣ 📜app3.py <br />
+  ┣ 📜start.sh <br />
+  ┗ 📜__init__.py <br />
 
 > **Note** A more detailed documentation is provided in the code.
 
@@ -354,7 +357,7 @@ The following interfaces can be accessed:
 * **Grafana Dashboard**: localhost:**3000**
 * **Flink Dashboard**: localhost:**8081**
 * **Kafka-UI**: localhost:**8080**
-* **Flask-Dash dashobard**: localhost **5050**
+* **Flask-Dash dashobard**: localhost:**5050**
 More services and relative ports can be found in the docker compose file. 
 
 ### 6.2. Services
