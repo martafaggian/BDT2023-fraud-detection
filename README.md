@@ -13,11 +13,11 @@ For navigating the live demo (final [grafana dashboard](#visualization)), you ca
 
 The workflow requires an initial data sources location in the path:
 ```
-./data/sources
+./data/sources/
 ```
 And some flink libraries in:
 ```
-./lib
+./lib/
 ```
 
 The sources zip can be downloaded [here](https://drive.google.com/file/d/13Po01RVLYdbDWWEvDPSfqElstoX_aX1g/view?usp=sharing).
@@ -135,7 +135,6 @@ The definition of the physical model is a simple task after the definition of a 
 
 > **Warning**
 > a further refinement of the physical model is usually needed in order to define possible bucketing and partitioning techniques based on the estimated data flow. Being this project a prototype, this step has been neglected. For more information, see [here](https://cassandra.apache.org/doc/latest/cassandra/data_modeling/data_modeling_refining.html)
-
 
 ## 3. Streamers
 
