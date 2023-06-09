@@ -23,24 +23,11 @@
   "liveNow": false,
   "panels": [
     {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 2,
-      "panels": [],
-      "title": "Fraud Detector",
-      "type": "row"
-    },
-    {
       "datasource": {
         "type": "hadesarchitect-cassandra-datasource",
-        "uid": "c2d9a28c-6045-4c53-9690-55c6a9a25c12"
+        "uid": "f164bfd1-9522-4fd3-9e3f-3c43ba2edc3b"
       },
-      "description": "Show fraud confidence over time for each bank",
+      "description": "Show fraud confidence of transactions over time for each bank",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -60,7 +47,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 1
+        "y": 0
       },
       "id": 3,
       "options": {
@@ -98,160 +85,31 @@
           "yHistogram": false
         },
         "yAxis": {
-          "axisPlacement": "left",
+          "axisPlacement": "right",
           "reverse": false
         }
       },
-      "pluginVersion": "9.5.2",
+      "pluginVersion": "9.5.3",
       "targets": [
         {
           "datasource": {
             "type": "hadesarchitect-cassandra-datasource",
-            "uid": "c2d9a28c-6045-4c53-9690-55c6a9a25c12"
+            "uid": "f164bfd1-9522-4fd3-9e3f-3c43ba2edc3b"
           },
-          "datasourceId": 1,
+          "datasourceId": 2,
           "queryType": "query",
           "rawQuery": true,
           "refId": "A",
           "target": "SELECT bank_id, CAST(fraud_confidence AS DOUBLE) as fraud_confidence, timestamp FROM fraud_detection.transactions_by_bank\n"
         }
       ],
-      "title": "Fraud Confidence over time",
+      "title": "Incoming transactions for each bank",
       "type": "heatmap"
     },
     {
       "datasource": {
         "type": "hadesarchitect-cassandra-datasource",
-        "uid": "c2d9a28c-6045-4c53-9690-55c6a9a25c12"
-      },
-      "description": "Show average fraud confidence for each bank",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-GrYlRd"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 17,
-        "x": 0,
-        "y": 9
-      },
-      "id": 4,
-      "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
-      },
-      "pluginVersion": "9.5.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "hadesarchitect-cassandra-datasource",
-            "uid": "c2d9a28c-6045-4c53-9690-55c6a9a25c12"
-          },
-          "datasourceId": 1,
-          "queryType": "query",
-          "rawQuery": true,
-          "refId": "A",
-          "target": "SELECT bank_id, CAST(fraud_confidence AS DOUBLE) as fraud_confidence, timestamp FROM fraud_detection.transactions_by_bank\n"
-        }
-      ],
-      "title": "Average Fraud Confidence ",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "hadesarchitect-cassandra-datasource",
-        "uid": "c2d9a28c-6045-4c53-9690-55c6a9a25c12"
-      },
-      "description": "Show transactions number over time for each bank",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "semi-dark-yellow",
-            "mode": "fixed"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 7,
-        "x": 17,
-        "y": 9
-      },
-      "id": 7,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "count"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "9.5.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "hadesarchitect-cassandra-datasource",
-            "uid": "c2d9a28c-6045-4c53-9690-55c6a9a25c12"
-          },
-          "datasourceId": 1,
-          "queryType": "query",
-          "rawQuery": true,
-          "refId": "A",
-          "target": "SELECT bank_id, amount, timestamp FROM fraud_detection.transactions_by_bank\n"
-        }
-      ],
-      "title": "Transactions over time",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "hadesarchitect-cassandra-datasource",
-        "uid": "c2d9a28c-6045-4c53-9690-55c6a9a25c12"
+        "uid": "f164bfd1-9522-4fd3-9e3f-3c43ba2edc3b"
       },
       "description": "Show transactions proportion over time for each bank",
       "fieldConfig": {
@@ -276,7 +134,7 @@
         "h": 9,
         "w": 8,
         "x": 0,
-        "y": 18
+        "y": 8
       },
       "id": 8,
       "options": {
@@ -307,9 +165,9 @@
         {
           "datasource": {
             "type": "hadesarchitect-cassandra-datasource",
-            "uid": "c2d9a28c-6045-4c53-9690-55c6a9a25c12"
+            "uid": "f164bfd1-9522-4fd3-9e3f-3c43ba2edc3b"
           },
-          "datasourceId": 1,
+          "datasourceId": 2,
           "queryType": "query",
           "rawQuery": true,
           "refId": "A",
@@ -322,78 +180,7 @@
     {
       "datasource": {
         "type": "hadesarchitect-cassandra-datasource",
-        "uid": "c2d9a28c-6045-4c53-9690-55c6a9a25c12"
-      },
-      "description": "Show transactions proportion over time for each account type",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "semi-dark-yellow",
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            }
-          },
-          "mappings": [],
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 8,
-        "y": 18
-      },
-      "id": 10,
-      "options": {
-        "displayLabels": [
-          "percent"
-        ],
-        "legend": {
-          "displayMode": "list",
-          "placement": "right",
-          "showLegend": true,
-          "values": []
-        },
-        "pieType": "pie",
-        "reduceOptions": {
-          "calcs": [
-            "count"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.5.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "hadesarchitect-cassandra-datasource",
-            "uid": "c2d9a28c-6045-4c53-9690-55c6a9a25c12"
-          },
-          "datasourceId": 1,
-          "queryType": "query",
-          "rawQuery": true,
-          "refId": "A",
-          "target": "SELECT account_type, amount, timestamp FROM fraud_detection.transactions_by_bank\n"
-        }
-      ],
-      "title": "Transactions proportion for account type",
-      "type": "piechart"
-    },
-    {
-      "datasource": {
-        "type": "hadesarchitect-cassandra-datasource",
-        "uid": "c2d9a28c-6045-4c53-9690-55c6a9a25c12"
+        "uid": "f164bfd1-9522-4fd3-9e3f-3c43ba2edc3b"
       },
       "description": "Show frauds proportion over time for each account type",
       "fieldConfig": {
@@ -417,8 +204,8 @@
       "gridPos": {
         "h": 9,
         "w": 8,
-        "x": 16,
-        "y": 18
+        "x": 8,
+        "y": 8
       },
       "id": 11,
       "options": {
@@ -449,9 +236,9 @@
         {
           "datasource": {
             "type": "hadesarchitect-cassandra-datasource",
-            "uid": "c2d9a28c-6045-4c53-9690-55c6a9a25c12"
+            "uid": "f164bfd1-9522-4fd3-9e3f-3c43ba2edc3b"
           },
-          "datasourceId": 1,
+          "datasourceId": 2,
           "queryType": "query",
           "rawQuery": true,
           "refId": "A",
@@ -462,22 +249,405 @@
       "type": "piechart"
     },
     {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 27
+      "datasource": {
+        "type": "hadesarchitect-cassandra-datasource",
+        "uid": "f164bfd1-9522-4fd3-9e3f-3c43ba2edc3b"
       },
-      "id": 1,
-      "panels": [],
-      "title": "Streamer",
-      "type": "row"
+      "description": "Show transactions number over time for each bank",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "semi-dark-yellow",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 8
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "count"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.5.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hadesarchitect-cassandra-datasource",
+            "uid": "f164bfd1-9522-4fd3-9e3f-3c43ba2edc3b"
+          },
+          "datasourceId": 2,
+          "queryType": "query",
+          "rawQuery": true,
+          "refId": "A",
+          "target": "SELECT bank_id, amount, timestamp FROM fraud_detection.transactions_by_bank\n"
+        }
+      ],
+      "title": "Total transactions by bank",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "hadesarchitect-cassandra-datasource",
+        "uid": "f164bfd1-9522-4fd3-9e3f-3c43ba2edc3b"
+      },
+      "description": "Show average fraud confidence for each bank",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 17,
+        "x": 0,
+        "y": 17
+      },
+      "id": 4,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "9.5.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hadesarchitect-cassandra-datasource",
+            "uid": "f164bfd1-9522-4fd3-9e3f-3c43ba2edc3b"
+          },
+          "datasourceId": 2,
+          "queryType": "query",
+          "rawQuery": true,
+          "refId": "A",
+          "target": "SELECT bank_id, CAST(fraud_confidence AS DOUBLE) as fraud_confidence, timestamp FROM fraud_detection.transactions_by_bank\n"
+        }
+      ],
+      "title": "Average Fraud Confidence by bank",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "hadesarchitect-cassandra-datasource",
+        "uid": "f164bfd1-9522-4fd3-9e3f-3c43ba2edc3b"
+      },
+      "description": "Show total amount of the frauds for each bank",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 7,
+        "x": 17,
+        "y": 17
+      },
+      "id": 14,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "count"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.5.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hadesarchitect-cassandra-datasource",
+            "uid": "f164bfd1-9522-4fd3-9e3f-3c43ba2edc3b"
+          },
+          "datasourceId": 2,
+          "queryType": "query",
+          "rawQuery": true,
+          "refId": "A",
+          "target": "select bank_id, amount, timestamp from fraud_detection.transactions_by_bank where is_fraud = true ALLOW FILTERING"
+        }
+      ],
+      "title": "Total frauds by bank",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "hadesarchitect-cassandra-datasource",
+        "uid": "f164bfd1-9522-4fd3-9e3f-3c43ba2edc3b"
+      },
+      "description": "Show transactions proportion over time for each account type",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "semi-dark-yellow",
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 5,
+        "x": 0,
+        "y": 26
+      },
+      "id": 10,
+      "options": {
+        "displayLabels": [
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": []
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "count"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hadesarchitect-cassandra-datasource",
+            "uid": "f164bfd1-9522-4fd3-9e3f-3c43ba2edc3b"
+          },
+          "datasourceId": 2,
+          "queryType": "query",
+          "rawQuery": true,
+          "refId": "A",
+          "target": "SELECT account_type, amount, timestamp FROM fraud_detection.transactions_by_bank\n"
+        }
+      ],
+      "title": "Transactions proportion for account type",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "hadesarchitect-cassandra-datasource",
+        "uid": "f164bfd1-9522-4fd3-9e3f-3c43ba2edc3b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "purple",
+            "mode": "fixed"
+          },
+          "custom": {
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "purple",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 5,
+        "y": 26
+      },
+      "id": 12,
+      "options": {
+        "bucketOffset": 0,
+        "combine": true,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "hadesarchitect-cassandra-datasource",
+            "uid": "f164bfd1-9522-4fd3-9e3f-3c43ba2edc3b"
+          },
+          "datasourceId": 2,
+          "queryType": "query",
+          "rawQuery": true,
+          "refId": "A",
+          "target": "select bank_id, amount, timestamp from fraud_detection.transactions_by_bank"
+        }
+      ],
+      "title": "Distribution of transactions amounts",
+      "transformations": [],
+      "type": "histogram"
+    },
+    {
+      "datasource": {
+        "type": "hadesarchitect-cassandra-datasource",
+        "uid": "f164bfd1-9522-4fd3-9e3f-3c43ba2edc3b"
+      },
+      "description": "Show total amount of the transactions for each bank",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "purple",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 7,
+        "x": 17,
+        "y": 26
+      },
+      "id": 13,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.5.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "hadesarchitect-cassandra-datasource",
+            "uid": "f164bfd1-9522-4fd3-9e3f-3c43ba2edc3b"
+          },
+          "datasourceId": 2,
+          "queryType": "query",
+          "rawQuery": true,
+          "refId": "A",
+          "target": "select bank_id, amount, timestamp from fraud_detection.transactions_by_bank"
+        }
+      ],
+      "title": "Sum of transactions amounts by bank",
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "redis-datasource",
-        "uid": "e1a66a9e-62a0-41a3-9abb-9e6ec5420411"
+        "uid": "e78c90cc-37f5-4db4-aae7-f7304d32b840"
       },
       "description": "Status of Streamer 1",
       "fieldConfig": {
@@ -533,7 +703,7 @@
         "h": 7,
         "w": 4,
         "x": 0,
-        "y": 28
+        "y": 35
       },
       "id": 5,
       "options": {
@@ -548,13 +718,13 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.5.2",
+      "pluginVersion": "9.5.3",
       "targets": [
         {
           "command": "get",
           "datasource": {
             "type": "redis-datasource",
-            "uid": "e1a66a9e-62a0-41a3-9abb-9e6ec5420411"
+            "uid": "e78c90cc-37f5-4db4-aae7-f7304d32b840"
           },
           "keyName": "streamer1.active",
           "query": "",
@@ -568,7 +738,7 @@
     {
       "datasource": {
         "type": "redis-datasource",
-        "uid": "e1a66a9e-62a0-41a3-9abb-9e6ec5420411"
+        "uid": "e78c90cc-37f5-4db4-aae7-f7304d32b840"
       },
       "description": "Status of Streamer 2",
       "fieldConfig": {
@@ -624,7 +794,7 @@
         "h": 7,
         "w": 4,
         "x": 4,
-        "y": 28
+        "y": 35
       },
       "id": 6,
       "options": {
@@ -639,13 +809,13 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.5.2",
+      "pluginVersion": "9.5.3",
       "targets": [
         {
           "command": "get",
           "datasource": {
             "type": "redis-datasource",
-            "uid": "e1a66a9e-62a0-41a3-9abb-9e6ec5420411"
+            "uid": "e78c90cc-37f5-4db4-aae7-f7304d32b840"
           },
           "keyName": "streamer2.active",
           "query": "",
@@ -696,8 +866,8 @@
     "type": "timepicker"
   },
   "timezone": "browser",
-  "title": "Home",
+  "title": "Fraud Detection",
   "uid": "d0825a85-22d7-435d-8b5f-1a9d5d43c7fb",
-  "version": 10,
+  "version": 5,
   "weekStart": ""
 }
