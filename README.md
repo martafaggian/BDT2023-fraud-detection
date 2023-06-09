@@ -236,7 +236,7 @@ The final visualization consists in a grafana dashboard with several panels show
 
 ![grafana demo](./img/grafana.gif)
 
-## Interfaces
+### 6.1. Interfaces
 
 The following interfaces can be accessed:
 * **Grafana Dashboard**: localhost:**3000**
