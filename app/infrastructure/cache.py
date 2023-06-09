@@ -1,7 +1,7 @@
 '''
-The Cache module provides a class for interacting with a Redis cache, 
-allowing you to store and retrieve key-value pairs. It also includes an 
-exception class for handling cache connection errors. 
+The Cache module provides a class for interacting with a Redis cache,
+allowing you to store and retrieve key-value pairs. It also includes an
+exception class for handling cache connection errors.
 
 The module can be used as follows:
 
@@ -36,10 +36,10 @@ from app.utils import Logger
 
 class CacheNotConnectedException(Exception):
     '''
-    A class that raise an exception when the 
+    A class that raise an exception when the
     cache is not connected. It inherits from the base Exception class.
-    
-    :param logger: An instance of the Logger class for handling logging 
+
+    :param logger: An instance of the Logger class for handling logging
     :type logger:
     :param message: The error message
     :type message:
@@ -53,19 +53,19 @@ class CacheNotConnectedException(Exception):
 
 class Cache:
     '''
-    The Cache class represents a Redis cache and provides methods for interacting with it. 
+    The Cache class represents a Redis cache and provides methods for interacting with it.
     It utilizes the redis.Redis class from the redis module for cache operations.
-    
+
     :param logger: An instance of the Logger class for handling logging
     :type logger:
     :param host: The hostname or IP address of the Redis server
     :type host:
     :param port: The port number of the Redis server
-    :type port: 
+    :type port:
     :param db: The Redis database number
     :param decode_responses: A boolean indicating whether to decode Redis responses
     '''
-    
+
     def __init__(
         self,
         logger: Logger,
@@ -74,7 +74,7 @@ class Cache:
         db: int = 0,
         decode_responses: bool = True
     ):
-        
+
         #memorizza l'host, la porta, il numero del database Redis e crea un oggetto Redis
         #per la connessione al cache
         self._host = host
@@ -90,7 +90,7 @@ class Cache:
     def is_connected(self):
         '''
         Checks if the cache is connected by pinging the Redis server
-        
+
         :return: True if the cache is connected.
         '''
         return self._cache.ping()
@@ -108,12 +108,12 @@ class Cache:
     def write(self, key, value, is_dict=False):
         '''
         Writes a key-value pair to the cache
-        
+
         :param key: The key to store the value.
         :type key
         :param value: The value to be stored.
         :type value:
-        :param is_dict: A boolean indicating whether the value is a dictionary. 
+        :param is_dict: A boolean indicating whether the value is a dictionary.
         :type is_dict:
         '''
         self.check_connected()
@@ -128,7 +128,7 @@ class Cache:
 
         :param key: The key to retrieve the value.
         :type key:
-        :param is_dict: A boolean indicating whether the value is a dictionary. 
+        :param is_dict: A boolean indicating whether the value is a dictionary.
         :type is_dict:
         :return: the value associated with the key.
         '''
@@ -145,7 +145,7 @@ class Cache:
         :type keys:
         :param values: An iterable of corresponding values.
         :type values:
-        :param is_dict: A boolean indicating whether the values are dictionaries. 
+        :param is_dict: A boolean indicating whether the values are dictionaries.
         :type is_dict:
         '''
         self.check_connected()

@@ -1,8 +1,6 @@
 import json
 from dataclasses import dataclass
-import pandas as pd
 from datetime import datetime
-from app.infrastructure import DatabaseTables
 
 @dataclass
 class User:

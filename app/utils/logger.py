@@ -41,7 +41,6 @@ from __future__ import annotations
 import os
 import sys
 import logging
-from enum import Enum
 from typing import Dict
 import _io
 

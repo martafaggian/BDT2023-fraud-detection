@@ -1,20 +1,18 @@
 '''
-The provided code defines a class called "StreamTransactions" that handles streaming of 
-transactions using Apache Flink. It integrates with components such as Kafka, Cassandra, 
-and the application's infrastructure. It includes a process function called "StreamSplitter" 
+The provided code defines a class called "StreamTransactions" that handles streaming of
+transactions using Apache Flink. It integrates with components such as Kafka, Cassandra,
+and the application's infrastructure. It includes a process function called "StreamSplitter"
 and utilizes a parser and fraud detection for processing the transactions.
 
 '''
 
 from __future__ import annotations
-from omegaconf import OmegaConf
 from pyflink.datastream import StreamExecutionEnvironment, OutputTag
 from pyflink.datastream.functions import ProcessFunction
 from pyflink.datastream.connectors.cassandra import CassandraSink
 from pyflink.common.typeinfo import Types
 from pyflink.common.types import Row
-from app.infrastructure import Database, DatabaseTables, Cache, ConsumerFlink
-from app.model import Account
+from app.infrastructure import Database, DatabaseTables, ConsumerFlink
 from app.pipeline import Parser, FraudDetection
 
 class StreamSplitter(ProcessFunction):
@@ -39,9 +37,9 @@ class StreamTransactions:
         db_conf_args
     ):
         '''
-        Initializes the StreamTransactions object with the provided configurations, 
+        Initializes the StreamTransactions object with the provided configurations,
         cache connection arguments, and database connection arguments
-        
+
         :param conf: Configuration object containing various settings for the streaming process.
         :param cache_conf_args: Cache connection arguments required to establish a connection to the cache.
         :param db_conf_args: Database connection arguments required to establish a connection to the database.
@@ -53,8 +51,8 @@ class StreamTransactions:
     def execute_env(self, pconf, procs=2):
         '''
         Executes the streaming environment for a specific transaction processing configuration.
-        
-        :param pconf: Configuration object for transaction processing containing settings related 
+
+        :param pconf: Configuration object for transaction processing containing settings related
                       to the transaction source, target, and parsing.
         :param procs: The parallelism degree for the streaming environment
         '''

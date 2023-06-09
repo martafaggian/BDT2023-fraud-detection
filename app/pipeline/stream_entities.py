@@ -1,17 +1,13 @@
 '''
-The provided code defines a class called "StreamEntities" that handles streaming of 
-different entities (e.g., user, account, bank) using Apache Flink. It interacts with various 
+The provided code defines a class called "StreamEntities" that handles streaming of
+different entities (e.g., user, account, bank) using Apache Flink. It interacts with various
 components such as Kafka, Cassandra, and the application's infrastructure.
 
 '''
 from __future__ import annotations
-from omegaconf import OmegaConf
-from pyflink.datastream import StreamExecutionEnvironment, OutputTag
-from pyflink.datastream.functions import ProcessFunction
+from pyflink.datastream import StreamExecutionEnvironment
 from pyflink.datastream.connectors.cassandra import CassandraSink
-from pyflink.common.typeinfo import Types
-from pyflink.common.types import Row
-from app.infrastructure import Database, DatabaseTables, Cache, ConsumerFlink
+from app.infrastructure import Database, DatabaseTables, ConsumerFlink
 from app.model import Account, User, Bank
 from app.pipeline import Parser
 
@@ -22,9 +18,9 @@ class StreamEntities:
         db_conf_args
     ):
         '''
-         Initializes the StreamEntities object with the provided configurations and database 
+         Initializes the StreamEntities object with the provided configurations and database
          connection arguments.
-         
+
          :param conf: Configuration object containing various settings for the streaming process
          :param db_conf_args: Database connection arguments required to establish connection to the database
 
@@ -35,12 +31,12 @@ class StreamEntities:
     def execute_env(self, econf, procs=1):
         '''
         Executes the streaming environment for a specific entity.
-        
-        :param econf: Configuration object for a specific entity containing settings related 
+
+        :param econf: Configuration object for a specific entity containing settings related
                       to the entity's source and parsing
         :param procs: The parallelism degree for the streaming environment
         '''
-        # Creates a Kafka consumer using the provided configurations 
+        # Creates a Kafka consumer using the provided configurations
         source = ConsumerFlink.from_conf(
             name=f"flink-{econf.source.name}",
             conf_broker=self.conf.kafka,
@@ -48,13 +44,13 @@ class StreamEntities:
             conf_parser=econf,
             types = Parser.get_types(econf.source.file)
         )
-        
+
         # Creates a database sink using the database connection arguments
         sink = Database.from_conf(**self.db_conf_args)
-        
+
         #Retrieves the Kafka consumer
         consumer = source.get_consumer()
-        
+
         #
         # 1. Creates a StreamExecutionEnvironment and sets the parallelism degree
         env = StreamExecutionEnvironment\

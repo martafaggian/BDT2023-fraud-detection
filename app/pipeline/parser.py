@@ -21,7 +21,7 @@ class SourceTypes(str, Enum):
 class Parser:
     '''
     The `Parser` class handles the conversion of data from a source format to a target format.
-    
+
     :param source: The source type
     :type source: str
     :param target: The target type
@@ -29,8 +29,8 @@ class Parser:
     :param source_parser_file_path: File path for the source parser definition
     :type source_parser_file_path: str
     :param target_parser_file_path: File path for the target parser definition
-    :type target_parser_file_path: str 
-    
+    :type target_parser_file_path: str
+
     '''
     def __init__(
         self,
@@ -55,7 +55,7 @@ class Parser:
     def get_query(self):
         '''
         Get the query associated with the parser
-        
+
         :return: The query dict
         '''
         return self.query
@@ -63,15 +63,15 @@ class Parser:
     def set_query(self, query):
         '''
         Set the query for the parser
-        
-        :param query: The query to set 
+
+        :param query: The query to set
         '''
         self.query = query
 
     def get_target_types(self):
         '''
         Get the target types.
-        
+
         :return: The target types
         '''
         return self._target_types
@@ -79,7 +79,7 @@ class Parser:
     def get_source_types(self):
         '''
         Get the source types.
-        
+
         :return: The source types
         '''
         return self._source_types
@@ -88,7 +88,7 @@ class Parser:
     def get_types(cls, file: str):
         '''
         Read and convert the types from a file.
-        
+
         :param file: The file path
         :type file: str
         :return The converted types
@@ -107,7 +107,7 @@ class Parser:
     def convert_types(cls, type_str: str) -> Types:
         '''
         Convert type strings to corresponding Flink types.
-        
+
         :param type_str: The type string
         :type param: type_str
         :return: The converted Flink type
@@ -134,7 +134,7 @@ class Parser:
 class SFDToTarget(MapFunction):
     '''
     The `SFDToTarget` class performs the mapping from synthetic financial datasets (SFD) to the target format.
-    
+
     :param cache_conf_args: Configuration arguments for the cache
     '''
     def __init__(self, cache_conf_args):
@@ -144,7 +144,7 @@ class SFDToTarget(MapFunction):
     def map(self, record):
         '''
         Map the input record to the target format.
-        
+
         :param record: The input record
         :return: The transformed record in the target format
         '''
@@ -188,7 +188,7 @@ class SFDToTarget(MapFunction):
     def get_query():
         '''
         Get the query dictionary for the target format.
-        
+
         :return: The query dictionary.
         '''
         query = Transaction.get_query_dict(auto_id=True)

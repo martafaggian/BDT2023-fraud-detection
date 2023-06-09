@@ -1,10 +1,10 @@
 '''
-The module provides a database abstraction layer for connecting to and interacting with a 
-Cassandra database. It includes a Database class that allows you to establish a connection, 
+The module provides a database abstraction layer for connecting to and interacting with a
+Cassandra database. It includes a Database class that allows you to establish a connection,
 execute queries, and manage the keyspace. The module also defines an enum class DatabaseTables
-for referencing table names and an exception class DatabaseNotConnectedException for handling 
-connection-related errors. It relies on the Logger class from the app.utils module for logging. 
-Overall, this module simplifies Cassandra database operations by providing a convenient and 
+for referencing table names and an exception class DatabaseNotConnectedException for handling
+connection-related errors. It relies on the Logger class from the app.utils module for logging.
+Overall, this module simplifies Cassandra database operations by providing a convenient and
 configurable interface.
 
 The module can be used as follow:
@@ -40,10 +40,10 @@ print(f"Insert query: {insert_query}")
 '''
 
 from __future__ import annotations
-from app.utils import Logger
 from enum import Enum
 from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
+from app.utils import Logger
 
 class DatabaseTables(str, Enum):
     ACCOUNTS = 'accounts'
@@ -60,7 +60,7 @@ class DatabaseNotConnectedException(Exception):
 class Database:
     '''
     Initialize a Database instance.
-    
+
     :param logger: The logger instance used for logging.
     :type logger: Logger
     :param host: The hostname or IP address of the database server.
@@ -117,7 +117,7 @@ class Database:
     def set_keyspace(self, keyspace):
         '''
         Set the keyspace to use
-        
+
         :param keyspace: name of the keyspace
         :type keyspace: str
         '''
@@ -135,7 +135,7 @@ class Database:
     def is_connected(self):
         '''
         Checks if the database is connected
-        
+
         :return: True if the database is connected.
         '''
         return self._session.is_connected()
@@ -158,7 +158,7 @@ class Database:
         values: list) -> str:
         '''
         Generates an insert query for a specified table.
-        
+
         :param table_name: The name of the table
         :type table_name: str
         :param keys: The list of column names
@@ -185,16 +185,16 @@ class Database:
         Update the query for a specified table
         :param table_name: The name of the table
         :type table_name: str
-        :param id_key: 
+        :param id_key:
         :type id_key: int
-        :param id_value: 
+        :param id_value:
         :type id-value: int
         :param key: The list of column names
         :type key: list
         :param value:The list of column values
         :type value: list
-        :return: 
-        
+        :return:
+
         '''
         return f"""
         UPDATE {self._keyspace}.{table_name}
@@ -206,13 +206,13 @@ class Database:
     def from_conf(name, conf_db, conf_log):
         '''
         Creates a Database instance from configuration settings.
-        
+
         :param name: The name of the configuration
         :type name: str
         :param cond_db: The database configuration settings
         :type cond_db:
         :param conf_log: The logger configuration settings
-        :type cond_db: 
+        :type cond_db:
         :return: A Database instance
         '''
         logger = Logger.from_conf(name, conf_log)

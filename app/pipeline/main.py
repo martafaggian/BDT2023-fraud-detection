@@ -7,8 +7,6 @@ from omegaconf import OmegaConf
 from app.infrastructure import Database, Cache
 from app.model import Account
 from app.pipeline import StreamTransactions, StreamEntities
-from kafka.admin import KafkaAdminClient, NewTopic
-
 
 if __name__ == '__main__':
     conf = OmegaConf.load("config.yaml")

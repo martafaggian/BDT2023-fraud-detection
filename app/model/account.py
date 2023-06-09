@@ -2,7 +2,7 @@
 This module defines a data class Account that represents an account and provides methods for
 data conversion and caching. The to_dict() method converts the Account object to a dictionary,
 to_json() converts it to a JSON string, and to_cache() writes the account data to a cache
-object using a specified key. The csv_to_cache() method reads CSV data from a file, extracts 
+object using a specified key. The csv_to_cache() method reads CSV data from a file, extracts
 the required columns, and writes the data to the cache using the 'account_id' column as the key.
 
 The module can be used as follows:
@@ -21,8 +21,8 @@ Account.csv_to_cache(cache, file='accounts.csv')
 '''
 import json
 from dataclasses import dataclass
-from app.infrastructure import DatabaseTables
 import pandas as pd
+from app.infrastructure import DatabaseTables
 
 @dataclass
 class Account:
@@ -54,7 +54,7 @@ class Account:
     def to_cache(self, cache, keyprefix=""):
         '''
         Writes the account object to a cache with the specified key.
-        
+
         :param cache: The cache object to write the data to
         :type cache:
         :param keyprefix: Prefix to prepend to the key
@@ -68,7 +68,7 @@ class Account:
     def submit(self, broker, topic):
         '''
         Submits the account object to the specified broker.
-        
+
         :param broker: The broker to submit the data to
         :type broker:
         '''
@@ -85,12 +85,12 @@ class Account:
 
         Reads the CSV file, extracts the necessary columns, and writes the data
         to the cache using the 'account_id' column as the key.
-        
-        :param cache: The cache object to write the data to 
+
+        :param cache: The cache object to write the data to
         :type cache: cache object
         :param file: The path to the CSV file
         :type file: str
-        
+
         '''
         df = pd.read_csv(file)
         keys = df.pop("account_id")
