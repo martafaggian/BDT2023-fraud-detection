@@ -1,8 +1,16 @@
 '''
-The provided code defines a class called "StreamTransactions" that handles streaming of
-transactions using Apache Flink. It integrates with components such as Kafka, Cassandra,
-and the application's infrastructure. It includes a process function called "StreamSplitter"
-and utilizes a parser and fraud detection for processing the transactions.
+This code provides a streaming environment for processing transactions in real-time. It reads 
+transactions from a Kafka topic, performs parsing and transformation using a Parser object, and 
+splits the stream into two branches.
+The main branch is processed for fraud detection, and the results are saved to a Cassandra database 
+as transactions. The side branch is used to update account balances in the Cassandra database.
+The code allows for parallel execution of the streaming process and integrates with Cassandra for 
+storing transaction data and updating account balances.
+
+This module can be used as follows:
+
+streamer = StreamTransactions(conf, cache_conf_args, db_conf_args)
+streamer.submit_all()
 
 '''
 
