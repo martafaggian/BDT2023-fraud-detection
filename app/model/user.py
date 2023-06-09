@@ -16,6 +16,9 @@ class User:
     def to_dict(self):
         '''
         Convert an user object to a dictionary
+        
+        :return: The user object as a dictionary.
+        :rtype: dict
         '''
         return {
             'email': self.email,
@@ -28,6 +31,9 @@ class User:
     def to_json(self):
         '''
         Converts the user object to a JSON string.
+        
+        :return: The user object as a JSON string.
+        :rtype: str
         '''
         return json.dumps(self.to_dict())
 
@@ -35,8 +41,10 @@ class User:
         '''
         Submits the user object to the specified broker.
 
-        :param broker: The broker to submit the data to
-        :type broker:
+        :param broker: The broker to submit the data to.
+        :type broker: Broker
+        :param topic: The topic to which the data should be submitted.
+        :type topic: str
         '''
         # broker.send(self.to_json(), topic)
         msg = self.to_dict()
@@ -51,6 +59,14 @@ class User:
 
     @staticmethod
     def get_query_dict(auto_id = True):
+        '''
+        Get the query dictionary for creating a user.
+        
+        :param auto_id: Flag indicating whether to generate an auto ID for the user (optional).
+        :type auto_id: bool, optional
+        :return: The query dictionary for creating a user.
+        :rtype: dict
+        '''
         usr_id = "CAST(uuid() AS TEXT)" if auto_id else "?"
         return {
             'user_id': usr_id,
