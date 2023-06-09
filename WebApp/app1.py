@@ -1,3 +1,19 @@
+"""
+# === OVERVIEW === #
+The code snippet demonstrates the implementation of a web application using Flask and Dash frameworks. 
+It creates a web interface for a fraud detection system called "DetectiveFraud" that helps users keep their transactions safe from thieves. 
+The application allows users to enter their email and password to log in and provides a link to search using their user ID. 
+The layout includes a navigation bar, input fields for email and password, a submit button, and a link to the selection page. 
+The code also defines a callback function to validate the email input.
+
+Firstly, we import the necessary modules and libraries:
+- Flask: A web framework for creating server-side applications.
+- Dash: A framework for building interactive web applications.
+- dash_bootstrap_components: A library providing Bootstrap-themed Dash components.
+- pandas: A library for data manipulation and analysis.
+
+"""
+
 from flask import Flask, redirect
 from dash import Dash, dcc, html, Input, Output
 import dash_bootstrap_components as dbc
