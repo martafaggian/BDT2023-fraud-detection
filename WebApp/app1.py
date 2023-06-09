@@ -6,6 +6,7 @@ The application allows users to enter their email and password to log in and pro
 The layout includes a navigation bar, input fields for email and password, a submit button, and a link to the selection page. 
 The code also defines a callback function to validate the email input.
 
+# === LIBRARIES === #
 Firstly, we import the necessary modules and libraries:
 -          flask: A web framework for creating server-side applications. With redirect() a response object (namely, a WSGI application) is returned and 
                   it redirects the client to the target location
