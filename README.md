@@ -184,9 +184,32 @@ A configuration example is the following:
     sleep_disabled: 10 # How much time to wait for checking the status when disabled
 ```
 
-## 3. Data Processing
+## 4. Data Processing & Fraud Detection
 
 ![flink demo](./img/flink_dash.png)
+
+(Py)Flink is the main player of the processing phase.
+Four separate jobs are proposed for this phase:
+* Transactions stream
+   * Fraud detection
+   * Dynamic update of accounts' balances
+* New users stream
+* New banks stream
+* New accounts stream 
+
+Jobs can be run by issuing the following:
+
+```sh
+docker exec -it pipeline-jobmanager flink run -py pipeline/main.py -d
+```
+
+or, if running a local flink instance, just:
+
+```sh
+flink run -py app/pipeline/main.py -d
+```
+
+> **Note** the fraud detection system relies only on a simple threshold. A further improvement may consist in the integration of Flink ML for more complex anomaly detection models, or some other statistical-based techniques, e.g. Benford's Law. 
 
 ## Database
 
