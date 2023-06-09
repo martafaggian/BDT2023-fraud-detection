@@ -2,7 +2,7 @@
 
 ## Live Demo
 
-For navigating the live demo (final [grafana dashboard](#visualization)), you can visit:
+For navigating the live demo (final [grafana dashboard](#6-visualization)), you can visit:
 > URL: **[bdt.davidecalza.com](https://bdt.davidecalza.com)**
 > <br />User: **guest**
 > <br />Password: **BDT2023**
@@ -21,7 +21,7 @@ And some flink libraries in:
 ```
 
 The sources zip can be downloaded [here](https://drive.google.com/file/d/13Po01RVLYdbDWWEvDPSfqElstoX_aX1g/view?usp=sharing).
-The lib zip can be downloaded[here](https://drive.google.com/file/d/1cBIjjZTNSo9UqNsf9Hq3LvYaWSyWuvoz/view?usp=drive_link)
+The lib zip can be downloaded [here](https://drive.google.com/file/d/1cBIjjZTNSo9UqNsf9Hq3LvYaWSyWuvoz/view?usp=drive_link)
 
 Afterwards, it is sufficient to run:
 ```sh
@@ -30,7 +30,7 @@ Afterwards, it is sufficient to run:
 
 The most critical parameters can be set via the proposed [config.yaml](config.yaml) file. 
 
-> **Note**: regarding the final [grafana dashboard](#visualization), it is necessary to upload the provided config file **./conf/grafana.json** in the grafana after adding the cassandra and redis sources. Some queries may not be set by default in the panel, but are included in the conf.json.  
+> **Note**: regarding the final [grafana dashboard](#6-visualization), it is necessary to upload the provided config file **./conf/grafana.json** in the grafana after adding the cassandra and redis sources. Some queries may not be set by default in the panel, but are included in the conf.json.  
 
 ### Prerequirements
 
@@ -60,10 +60,10 @@ The data modeling process was performed by following the indications proposed by
 > data modeling for cassandra requires a **query oriented** approach, different from the typical relational data modeling.
 
 Overall, the data modeling workflow is:
-1. Define a [conceptual model](#conceptual-model)
-2. Define a [query model](#query-model)
-3. Merge conceptual and query models into a [logical model](#logical-model)
-4. Derive a [physical model](#physical-model) from the logical
+1. Define a [conceptual model](#21-conceptual-model)
+2. Define a [query model](#22-query-model)
+3. Merge conceptual and query models into a [logical model](#23-logical-model)
+4. Derive a [physical model](#24-physical-model) from the logical
 
 <img src="./img/data_modeling.png" alt="data processing workflow" width="70%"/>
 
@@ -145,22 +145,32 @@ As multiple sources can be present, a streams manager is included, which will ha
 ![kafka demo](./img/kafka_ui.png)
 
 The source format is not relevant, as the system was designed to provide several parsers with the aim of convert the source formats to the target one.
-Parsers are part of the [flink pipeline](#data-processing).
+Parsers are part of the [flink pipeline](#4-data-processing--fraud-detection).
 Each streamer stores its status (active, enabled, interrupted) in a redis cache.
 Useful commands for handling the streamers are:
 
 ```sh
 ./stream_start.sh # Start streamers when interrupt/at the first run
 ```
+
+<img src="./img/stream_start.gif" alt="stream start demo" width="70%"/>
+
 ```sh
 ./stream_disable.sh # Disable streamers but keep running.
 ```
+
+<img src="./img/stream_disable.gif" alt="stream disable demo" width="70%"/>
+
 ```sh
 ./stream_enable.sh # Enable streamers.
 ```
+<img src="./img/stream_enable.gif" alt="stream enable demo" width="70%"/>
+
 ```sh
 ./stream_interrupt.sh # Interrupt all streamers. Requires a new start afterwards.
 ```
+
+<img src="./img/stream_interrupt.gif" alt="stream interrupt demo" width="70%"/>
 
 A configuration example is the following:
 
@@ -174,26 +184,66 @@ A configuration example is the following:
     sleep_disabled: 10 # How much time to wait for checking the status when disabled
 ```
 
-## 3. Data Processing
+## 4. Data Processing & Fraud Detection
 
 ![flink demo](./img/flink_dash.png)
 
-## Database
+(Py)Flink is the main player of the processing phase.
+Four separate jobs are proposed for this phase:
+* Transactions stream
+   * Fraud detection
+   * Dynamic update of accounts' balances
+* New users stream
+* New banks stream
+* New accounts stream 
 
-### Add entities
+Jobs can be run by issuing the following:
+
+```sh
+docker exec -it pipeline-jobmanager flink run -py pipeline/main.py -d
+```
+
+or, if running a local flink instance, just:
+
+```sh
+flink run -py app/pipeline/main.py -d
+```
+
+> **Note** the fraud detection system relies only on a simple threshold. A further improvement may consist in the integration of Flink ML for more complex anomaly detection models, or some other statistical-based techniques, e.g. Benford's Law. 
+
+## 5. Database
+
+By default, the cassandra cluster is created with 3 nodes from the docker compose.
+The default database schema is depicted in section (#24-physical-model).
+
+### 5.1. Add entities
+
+Some functionalities have been integrated in order to add users, banks and accounts.
 
 ![add entities demo](./img/insert_bank.gif)
 
-## Visualization
+For accessing the interface, the command is:
+
+```sh
+./add.sh
+```
+
+The insertion process will be entirely guided.
+
+## 6. Visualization
+
+The final visualization consists in a grafana dashboard with several panels showing statistics, primarly grouped by different banks:
 
 ![grafana demo](./img/grafana.gif)
 
-## Interfaces
+### 6.1. Interfaces
 
 The following interfaces can be accessed:
 * **Grafana Dashboard**: localhost:**3000**
 * **Flink Dashboard**: localhost:**8081**
 * **Kafka-UI**: localhost:**8080**
+
+More services and relative ports can be found in the docker compose file. 
 
 ## TODOs
 

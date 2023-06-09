@@ -9,8 +9,6 @@ The class also includes a static method from_conf that creates a Streamer object
 the provided configurations. It uses the configurations for the logger, cache, Kafka broker,
 and streamer itself to initialize the Streamer object.
 
-The code includes inline documentation explaining the purpose and usage of each method and class.
-
 The model can be used as follow:
 
 producer = Producer(...)
