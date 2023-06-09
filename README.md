@@ -258,6 +258,60 @@ flink run -py app/pipeline/main.py -d
 
 > **Note** the fraud detection system relies only on a simple threshold. A further improvement may consist in the integration of Flink ML for more complex anomaly detection models, or some other statistical-based techniques, e.g. Benford's Law. 
 
+A configuration example for the parsers is the following:
+
+```yaml
+ parsers:
+  - source:
+      name: synthetic_financial_datasets # source identifier
+      topics: # list of topics from which listening for retrieving source messages
+        - raw-streamer1
+      file: ./parsers/synthetic_financial_datasets.json # json containing source types
+    target:
+      name: target # target identifier
+      file: ./parsers/target.json # json containing target types
+```
+
+An example of a parser for the synthetic_financial_datasets is the following:
+```json
+{
+    "step": "INT",
+    "type": "STRING",
+    "amount": "DOUBLE",
+    "nameOrig": "STRING",
+    "oldbalanceOrg": "DOUBLE",
+    "newbalanceOrig": "DOUBLE",
+    "nameDest": "STRING",
+    "oldbalanceDest": "DOUBLE",
+    "newbalanceDest": "DOUBLE",
+    "isFraud": "BOOLEAN",
+    "isFlaggedFraud": "BOOLEAN"
+}
+```
+
+> **Note**: available types are: **[STRING, TEXT], [DOUBLE], [BOOLEAN, BOOL], [INT, INTEGER], FLOAT, FLOATTUPLE, DATE (not supported by cassandra connector, however)**.
+
+A configuration example for entities to parse and add to the db, with the concept similar to the section for the transactions, is the following:
+
+```yaml
+entities:
+  - source:
+      name: bank
+      topics:
+        - new-bank
+      file: ./parsers/bank.json
+  - source:
+      name: user
+      topics:
+        - new-user
+      file: ./parsers/user.json
+  - source:
+      name: account
+      topics:
+        - new-account
+      file: ./parsers/account.json
+```
+
 ## 5. Database
 
 By default, the cassandra cluster is created with 3 nodes from the docker compose.
