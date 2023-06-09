@@ -8,7 +8,7 @@ For navigating the live demo (final [grafana dashboard](#6-visualization)), you 
 > <br />Password: **BDT2023** 
 
 For navigating the Flask-Dash Dashboard, you can visit:
-> URL: **[davidecalza.com](https://davidecalza.com:5050)**
+> URL: **[davidecalza.com:5050](https://davidecalza.com:5050)**
 
 > **Warning** due to recently frequent disconnections from my ISP, the website may not be always reachable, since DNS cache takes some minutes to refresh after a change of my server's public IP. 
 
