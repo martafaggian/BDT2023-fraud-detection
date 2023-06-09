@@ -83,7 +83,8 @@ class Transaction:
     @staticmethod
     def get_query_dict(auto_id = True):
         '''
-         Get a dictionary representation of the transaction attributes for database queries.
+         Get a dictionary representation of the transaction attributes
+         for database insert queries.
 
          :param auto_id: Indicates if the transaction ID should be automatically generated
          :type auto_id: bool

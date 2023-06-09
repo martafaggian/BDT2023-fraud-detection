@@ -12,12 +12,10 @@ account_dict = account.to_dict()
 
 account_json = account.to_json()
 
-cache = MyCache()  # Initialize your cache object
-account.to_cache(cache, keyprefix="account_")
+cache = Cache()  # Initialize your cache object
+account.to_cache(cache)
 
-cache = MyCache()  # Initialize your cache object
 Account.csv_to_cache(cache, file='accounts.csv')
-
 '''
 import json
 from dataclasses import dataclass
@@ -116,7 +114,7 @@ class Account:
     @staticmethod
     def get_query_dict(auto_id = True):
         '''
-        Returns a query dictionary representing a template for retrieving account data.
+        Returns a query dictionary representing a template for inserting account data.
 
         :param auto_id: A flag indicating whether to use auto-generated account IDs or placeholders.
         :type auto_id: bool
