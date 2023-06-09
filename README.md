@@ -30,6 +30,8 @@ Afterwards, it is sufficient to run:
 
 The most critical parameters can be set via the proposed [config.yaml](config.yaml) file. 
 
+> **Note**: regarding the final [grafana dashboard](#visualization), it is necessary to upload the provided config file **./conf/grafana.json** in the grafana after adding the cassandra and redis sources. Some queries may not be set by default in the panel, but are included in the conf.json.  
+
 ### Prerequirements
 
 * docker
