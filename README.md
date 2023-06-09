@@ -351,6 +351,10 @@ The final visualization consists in a grafana dashboard with several panels show
 
 ![grafana demo](./img/grafana.gif)
 
+A user-oriented dashboard is also provided using Flask and Dash frameworks, that allow users to see all of their transactions:
+
+![flask demo](./img/flask.gif)
+
 ### 6.1. Interfaces
 
 The following interfaces can be accessed:
