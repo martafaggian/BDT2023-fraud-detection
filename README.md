@@ -152,15 +152,25 @@ Useful commands for handling the streamers are:
 ```sh
 ./stream_start.sh # Start streamers when interrupt/at the first run
 ```
+
+<img src="./img/stream_start.gif" alt="stream start demo" width="70%"/>
+
 ```sh
 ./stream_disable.sh # Disable streamers but keep running.
 ```
+
+<img src="./img/stream_disable.gif" alt="stream disable demo" width="70%"/>
+
 ```sh
 ./stream_enable.sh # Enable streamers.
 ```
+<img src="./img/stream_enable.gif" alt="stream enable demo" width="70%"/>
+
 ```sh
 ./stream_interrupt.sh # Interrupt all streamers. Requires a new start afterwards.
 ```
+
+<img src="./img/stream_interrupts.gif" alt="stream interrupts demo" width="70%"/>
 
 A configuration example is the following:
 
