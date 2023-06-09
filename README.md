@@ -21,7 +21,7 @@ And some flink libraries in:
 ```
 
 The sources zip can be downloaded [here](https://drive.google.com/file/d/13Po01RVLYdbDWWEvDPSfqElstoX_aX1g/view?usp=sharing).
-The lib zip can be downloaded[here](https://drive.google.com/file/d/1cBIjjZTNSo9UqNsf9Hq3LvYaWSyWuvoz/view?usp=drive_link)
+The lib zip can be downloaded [here](https://drive.google.com/file/d/1cBIjjZTNSo9UqNsf9Hq3LvYaWSyWuvoz/view?usp=drive_link)
 
 Afterwards, it is sufficient to run:
 ```sh
