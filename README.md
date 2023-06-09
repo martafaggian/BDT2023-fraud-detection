@@ -13,11 +13,11 @@ For navigating the live demo (final [grafana dashboard](#visualization)), you ca
 
 The workflow requires an initial data sources location in the path:
 ```
-./data/sources
+./data/sources/
 ```
 And some flink libraries in:
 ```
-./lib
+./lib/
 ```
 
 The sources zip can be downloaded [here](https://drive.google.com/file/d/13Po01RVLYdbDWWEvDPSfqElstoX_aX1g/view?usp=sharing).
@@ -50,11 +50,93 @@ The project requirement was the following:
 
 The pipeline design is the following:
 
-![pipeline design](./img/pipeline_design.jpg)
+<img src="./img/pipeline_design.jpg" alt="pipeline design" width="70%"/>
 
-**TODO: insert pipeline image here** 
+## 2. Data Modeling
 
-## 2. Streamers
+The data modeling process was performed by following the indications proposed by
+[cassandra](https://cassandra.apache.org/doc/latest/cassandra/data_modeling.html) for a correct modeling of the data structure.
+> **Warning**
+> data modeling for cassandra requires a **query oriented** approach, different from the typical relational data modeling.
+
+Overall, the data modeling workflow is:
+1. Define a [conceptual model](#conceptual-model)
+2. Define a [query model](#query-model)
+3. Merge conceptual and query models into a [logical model](#logical-model)
+4. Derive a [physical model](#physical-model) from the logical
+
+<img src="./img/data_modeling.png" alt="data processing workflow" width="70%"/>
+
+### 2.1. Conceptual Model
+
+The conceptual model aims at defining the entities present in the data model and the relationships that may be present between each other.
+This example proposes a conceptual model for a fraud detection system using the Peter Chen's entity-relationship model:
+
+<img src="img/1_conceptual_model.drawio.png" alt="conceptual model" width="70%"/>
+
+### 2.2. Query Model
+
+The second step consists in defining a query model. This is particularly promoted by the cassandra query-oriented approach.
+This consists in defining the possible end queries that the system will perform to the db, in order to provide a robust and
+efficient model.
+
+#### 2.2.1. User Stories
+
+A preliminary step useful for defining the possible end queries is the definition of the so-called user stories:
+
+----
+
+* As a user, I want to see:
+    * my details
+    * the details of my accounts
+    * all my transactions
+    * the transactions of one of my accounts
+    * if there are some anomalous transactions
+    * the details of the transactions
+
+----
+
+* As a bank, I want to see:
+    * my details
+    * the details of the accounts
+    * the details of the users
+    * all transactions of the bank
+    * the details of the transactions
+    * all transactions of a user
+    * all transactions of an account
+    * all the fraudulent transactions
+
+----
+
+* As the fraud detector system, I want to see:
+    * all transactions available
+    * all transactions of a user
+    * all transactions of an account
+    
+#### 2.2.2. Final Query Model
+
+After the definition of the user stories, it is possible to define the query model:
+
+<img src="img/2_query_model.drawio.png" alt="query model" width="70%"/>
+
+### 2.3. Logical Model
+
+Conceptual and query models are then combined into a logical model:
+
+<img src="img/3_logical_model.drawio.png" alt="logical model" width="70%"/>
+
+The definition of the logical model for Cassandra data model is a critical phase because it determines how the data will be structured and organized to fit the specific queries and data access patterns of the application.
+
+### 2.4. Physical Model
+
+The definition of the physical model is a simple task after the definition of a logical model:
+
+<img src="img/4_physical_model.png" alt="physical model" width="70%"/>
+
+> **Warning**
+> a further refinement of the physical model is usually needed in order to define possible bucketing and partitioning techniques based on the estimated data flow. Being this project a prototype, this step has been neglected. For more information, see [here](https://cassandra.apache.org/doc/latest/cassandra/data_modeling/data_modeling_refining.html)
+
+## 3. Streamers
 
 In order to simulate a possible real case of real-time transactions, several streaming utilities have been included.
 The concept is to add an input source (like the ones proposed in the introduction section) and stream all the data to a kafka broker, defined in the config file.
@@ -95,90 +177,6 @@ A configuration example is the following:
 ## 3. Data Processing
 
 ![flink demo](./img/flink_dash.png)
-
-## 4. Data Modeling
-
-The data modeling process was performed by following the indications proposed by
-[cassandra](https://cassandra.apache.org/doc/latest/cassandra/data_modeling.html) for a correct modeling of the data structure.
-> **Warning**
-> data modeling for cassandra requires a **query oriented** approach, different from the typical relational data modeling.
-
-Overall, the data modeling workflow is:
-1. Define a [conceptual model](#conceptual-model)
-2. Define a [query model](#query-model)
-3. Merge conceptual and query models into a [logical model](#logical-model)
-4. Derive a [physical model](#physical-model) from the logical
-
-<img src="./img/data_modeling.png" alt="data processing workflow" width="70%"/>
-
-### 4.1. Conceptual Model
-
-The conceptual model aims at defining the entities present in the data model and the relationships that may be present between each other.
-This example proposes a conceptual model for a fraud detection system using the Peter Chen's entity-relationship model:
-
-<img src="img/1_conceptual_model.drawio.png" alt="conceptual model" width="70%"/>
-
-### 4.2. Query Model
-
-The second step consists in defining a query model. This is particularly promoted by the cassandra query-oriented approach.
-This consists in defining the possible end queries that the system will perform to the db, in order to provide a robust and
-efficient model.
-
-#### 4.2.1. User Stories
-
-A preliminary step useful for defining the possible end queries is the definition of the so-called user stories:
-
-----
-
-* As a user, I want to see:
-    * my details
-    * the details of my accounts
-    * all my transactions
-    * the transactions of one of my accounts
-    * if there are some anomalous transactions
-    * the details of the transactions
-
-----
-
-* As a bank, I want to see:
-    * my details
-    * the details of the accounts
-    * the details of the users
-    * all transactions of the bank
-    * the details of the transactions
-    * all transactions of a user
-    * all transactions of an account
-    * all the fraudulent transactions
-
-----
-
-* As the fraud detector system, I want to see:
-    * all transactions available
-    * all transactions of a user
-    * all transactions of an account
-    
-#### 4.2.2. Final Query Model
-
-After the definition of the user stories, it is possible to define the query model:
-
-<img src="img/2_query_model.drawio.png" alt="query model" width="70%"/>
-
-### 4.3. Logical Model
-
-Conceptual and query models are then combined into a logical model:
-
-<img src="img/3_logical_model.drawio.png" alt="logical model" width="70%"/>
-
-The definition of the logical model for Cassandra data model is a critical phase because it determines how the data will be structured and organized to fit the specific queries and data access patterns of the application.
-
-### Physical Model
-
-The definition of the physical model is a simple task after the definition of a logical model:
-
-<img src="img/4_physical_model.png" alt="physical model" width="70%"/>
-
-> **Warning**
-> a further refinement of the physical model is usually needed in order to define possible bucketing and partitioning techniques based on the estimated data flow. Being this project a prototype, this step has been neglected. For more information, see [here](https://cassandra.apache.org/doc/latest/cassandra/data_modeling/data_modeling_refining.html)
 
 ## Database
 
