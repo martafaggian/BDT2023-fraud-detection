@@ -89,7 +89,7 @@ pip install -r requirements.txt
   ┣ 📜logger.py <br />
   ┗ 📜__init__.py <br />
 
-> **Warning** A more detailed documentation is provided in the code.
+> **Note** A more detailed documentation is provided in the code.
 
 ## 1. Introduction
 
