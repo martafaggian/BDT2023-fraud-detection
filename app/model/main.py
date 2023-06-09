@@ -1,8 +1,37 @@
 '''
-The purpose of this code is to provide an interactive command-line interface for creating and
-submitting entities (User, Account, Bank) based on user input. It loads the entity structure
-from JSON files, prompts the user to input values for the entity attributes, and submits the
-entity to the corresponding Kafka topic using a Producer.
+This code allows users to interactively create and submit entities (User, Account, Bank) based 
+on a given YAML configuration file. It provides a command-line interface where users can select 
+the type of entity they want to add and then input the corresponding data interactively. 
+The code uses the inquirer library to prompt users for input and validates the input based on 
+the specified entity structure.
+The load_source(file) function loads JSON data from a file and returns it as a dictionary.
+The isnumber(answers, current) function is a validation callback that checks if the user's 
+input is a number.
+The get_entity(model) function prompts users to input values for creating an entity based on 
+the given entity model. It uses the inquirer library to ask for input and validates it 
+according to the model.
+The main(conf) function drives the interactive entity creation and submission process. It uses 
+the provided configuration (conf) to determine the data sources and topics for each entity type. 
+It prompts users to select an entity type, collects input values using get_entity(), creates 
+the entity object, and asks for confirmation before submitting it. If confirmed, it uses the 
+Producer class from the app.infrastructure module to submit the entity to the corresponding 
+Kafka topic.
+The code parses command-line arguments using the argparse module. It expects the -c or --conf 
+argument to specify the path to the YAML configuration file.
+
+The module can be used as follows: 
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--conf', help='YAML config file', required=True)
+    
+    args = parser.parse_args()
+
+    conf = OmegaConf.load(args.conf)
+    main(conf)
+    
+python your_script.py -c config.yaml
+
 '''
 
 import argparse
