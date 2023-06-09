@@ -362,6 +362,7 @@ The following interfaces can be accessed:
 * **Flink Dashboard**: localhost:**8081**
 * **Kafka-UI**: localhost:**8080**
 * **Flask-Dash dashobard**: localhost:**5050**
+
 More services and relative ports can be found in the docker compose file. 
 
 ### 6.2. Services
