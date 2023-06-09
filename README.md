@@ -41,6 +41,8 @@ pip install -r requirements.txt
 ```
 > **Warning** for systems with less than 8GB of RAM, it is recommended to run only one cassandra node and set parallel processes of flink to 1. 
 
+> **Warning** for low memory systems, it is also recommended to run flink natively instead of running the dockerized version (see [here](https://nightlies.apache.org/flink/flink-docs-master/docs/deployment/resource-providers/standalone/overview/)). The installing procedure can be found in the relative [Dockerfile](./app/pipeline/Dockerfile), and a pointer to kafka host from localhost is needed in /etc/hosts. Further tweaks may be required. 
+
 ## 1. Introduction
 
 ![workflow demo](./img/workflow.gif)
