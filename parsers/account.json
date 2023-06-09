@@ -1,0 +1,6 @@
+{
+    "bank_id": "STRING",
+    "user_id": "STRING",
+    "type": "STRING",
+    "balance": "DOUBLE"
+}

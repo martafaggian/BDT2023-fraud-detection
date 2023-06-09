@@ -1,0 +1,244 @@
+version: '3.1'
+services:
+  # === Cassandra Cluster === #
+  cassandra-1:
+    image: cassandra:latest
+    container_name: cassandra-1
+    restart: always
+    environment:
+      - CASSANDRA_SEEDS=cassandra-1,cassandra-2,cassandra-3
+      - CASSANDRA_CLUSTER_NAME=cassandra-cluster
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_DC=dc1
+      - CASSANDRA_RACK=rack1
+      - CASSANDRA_AUTO_BOOTSTRAP=true
+    volumes:
+      - ./data/cassandra-1:/var/lib/cassandra
+      - ./conf/cassandra/cassandra-1.yaml:/etc/cassandra/cassandra.yaml
+    healthcheck:
+        test: ["CMD", "cqlsh", "-e describe keyspaces"]
+        interval: 15s
+        timeout: 10s
+        retries: 10
+    ports:
+      - "9042:9042"
+    networks:
+      db-net:
+        ipv4_address: 172.28.0.2
+
+  cassandra-2:
+    image: cassandra:latest
+    container_name: cassandra-2
+    restart: always
+    environment:
+      - CASSANDRA_SEEDS=cassandra-1,cassandra-2,cassandra-3
+      - CASSANDRA_CLUSTER_NAME=cassandra-cluster
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_DC=dc1
+      - CASSANDRA_RACK=rack1
+      - CASSANDRA_AUTO_BOOTSTRAP=true
+    volumes:
+      - ./data/cassandra-2:/var/lib/cassandra
+      - ./conf/cassandra/cassandra-2.yaml:/etc/cassandra/cassandra.yaml
+    ports:
+      - "9043:9042"
+    networks:
+      db-net:
+        ipv4_address: 172.28.0.3
+
+  cassandra-3:
+    image: cassandra:latest
+    container_name: cassandra-3
+    restart: always
+    environment:
+      - CASSANDRA_SEEDS=cassandra-1,cassandra-2,cassandra-3
+      - CASSANDRA_CLUSTER_NAME=cassandra-cluster
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_DC=dc1
+      - CASSANDRA_RACK=rack1
+      - CASSANDRA_AUTO_BOOTSTRAP=true
+    ports:
+      - "9044:9042"
+    volumes:
+      - ./data/cassandra-3:/var/lib/cassandra
+      - ./conf/cassandra/cassandra-3.yaml:/etc/cassandra/cassandra.yaml
+    networks:
+      db-net:
+        ipv4_address: 172.28.0.4
+
+  # https://stackoverflow.com/questions/40443617/init-script-for-cassandra-with-docker-compose
+  cassandra-load-db:
+    container_name: cassandra-load-db
+    image: cassandra:latest
+    depends_on:
+      cassandra-1:
+        condition: service_healthy
+    volumes:
+      - ./conf/cassandra/fraud_schema.cql:/schema.cql
+      - ./conf/cassandra/start.sh:/start.sh
+      - ./data/sources:/sources
+    command: /bin/bash /start.sh
+    networks:
+      db-net:
+        ipv4_address: 172.28.0.9
+
+  # === Redis === #
+
+  redis:
+    image: redis:7.0
+    container_name: redis
+    restart: always
+    volumes:
+      - ./data/redis:/data
+    ports:
+      - "6379:6379"
+    environment:
+      NAME: redis
+    networks:
+      streamer-net:
+        ipv4_address: 172.28.1.2
+      db-net:
+        ipv4_address: 172.28.0.7
+
+  # === Kafka === #
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    restart: always
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      streamer-net:
+        ipv4_address: 172.28.1.3
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    hostname: kafka
+    restart: always
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      #KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      streamer-net:
+        ipv4_address: 172.28.1.4
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 8080:8080
+    environment:
+      DYNAMIC_CONFIG_ENABLED: true
+    depends_on:
+      - kafka
+    volumes:
+      - ./data/kui/config.yaml:/etc/kafkaui/dynamic_config.yaml
+    networks:
+      streamer-net:
+        ipv4_address: 172.28.1.9
+
+  # === Flink === #
+
+  jobmanager:
+    build:
+      context: .
+      dockerfile: app/pipeline/Dockerfile
+    container_name: pipeline-jobmanager
+    restart: always
+    #expose:
+      #- "6123"
+    ports:
+      - "8081:8081"
+    command: jobmanager
+    volumes:
+      - ./logs:/env/app/logs
+    environment:
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+    networks:
+      streamer-net:
+        ipv4_address: 172.28.1.5
+      db-net:
+        ipv4_address: 172.28.0.5
+
+  taskmanager:
+    build:
+      context: .
+      dockerfile: app/pipeline/Dockerfile
+    container_name: pipeline-taskmanager
+    restart: always
+    #expose:
+      #- "6121"
+      #- "6122"
+    depends_on:
+      - jobmanager
+    command: taskmanager
+    scale: 1
+    #links:
+      #- "jobmanager:jobmanager"
+    environment:
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+      - TASK_MANAGER_NUMBER_OF_TASK_SLOTS=4
+    networks:
+      streamer-net:
+        ipv4_address: 172.28.1.6
+      db-net:
+        ipv4_address: 172.28.0.6
+
+  # === Streamer === #
+
+  streamer:
+    build:
+      context: .
+      dockerfile: app/stream/Dockerfile
+    container_name: streamer
+    #restart: always
+    depends_on:
+      - redis
+      - kafka
+    volumes:
+      - ./logs:/env/app/logs
+      - ./data/sources:/env/app/data
+    networks:
+      streamer-net:
+        ipv4_address: 172.28.1.7
+
+  # === Grafana === #
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      db-net:
+        ipv4_address: 172.28.0.8
+      streamer-net:
+        ipv4_address: 172.28.1.8
+
+networks:
+  streamer-net:
+    name: streamer-net
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.1.0/24
+  db-net:
+    name: db-net
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/24

@@ -1,0 +1,73 @@
+cassandra:
+  host: localhost
+  port: 9042
+  keyspace: fraud_detection
+  username: null
+  password: null
+
+flink:
+  parser:
+    parallelism: 1
+
+kafka:
+  host: localhost
+  port: 9092
+
+redis:
+  host: localhost
+  port: 6379
+  accounts:
+    file: ./data/accounts.csv
+    db: 1
+  streamers:
+    db: 0
+
+streamers:
+  - name: streamer1
+    file: ./data/synthetic_financial_datasets.csv
+    topic: raw-streamer1
+    status_key: streamer1.active
+    messages_per_second: 0.05
+    sleep_disabled: 10
+  - name: streamer2
+    file: ./data/synthetic_financial_datasets_short.csv
+    topic: raw-streamer2
+    status_key: streamer2.active
+    messages_per_second: 0.02
+    sleep_disabled: 10
+
+parsers:
+  - source:
+      name: synthetic_financial_datasets
+      topics:
+        - raw-streamer1
+        - raw-streamer2
+      file: ./parsers/synthetic_financial_datasets.json
+    target:
+      name: target
+      file: ./parsers/target.json
+
+entities:
+  - source:
+      name: bank
+      topics:
+        - new-bank
+      file: ./parsers/bank.json
+  - source:
+      name: user
+      topics:
+        - new-user
+      file: ./parsers/user.json
+  - source:
+      name: account
+      topics:
+        - new-account
+      file: ./parsers/account.json
+
+logs:
+  dir: ./logs
+  info_file: info.log
+  warning_file: info.log
+  error_file: error.log
+  critical_file: error.log
+  debug_file: debug.log

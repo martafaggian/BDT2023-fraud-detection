@@ -1,0 +1,7 @@
+{
+    "ssn": "STRING",
+    "registration_date": "STRING",
+    "name": "STRING",
+    "email": "STRING",
+    "birthdate": "STRING"
+}
