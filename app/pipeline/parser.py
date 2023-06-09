@@ -1,41 +1,20 @@
 '''
 This code provides a parser for transforming data from a source format to a target format using Apache Flink.
 It consists of two main components: the Parser class and the SFDToTarget class.
-The Parser class handles the conversion of data from a specified source format to a target format. It is 
-initialized with the source type, target type, and file paths for the source and target parser definitions. 
-The class provides methods to retrieve the target types, source types, and the query associated with the parser. 
+The Parser class handles the conversion of data from a specified source format to a target format. It is
+initialized with the source type, target type, and file paths for the source and target parser definitions.
+The class provides methods to retrieve the target types, source types, and the query associated with the parser.
 It also includes functions to convert types from a file and convert type strings to corresponding Flink types.
 
-The SFDToTarget class performs the mapping from synthetic financial datasets (SFD) to the target format. It takes 
-cache configuration arguments as input. The class implements the map function, which maps the input record to the 
-target format. It utilizes a cache object to read and retrieve data during the mapping process. The transformed 
-record is returned in the target format. The class also provides a method to retrieve the query dictionary for 
+The SFDToTarget class performs the mapping from synthetic financial datasets (SFD) to the target format. It takes
+cache configuration arguments as input. The class implements the map function, which maps the input record to the
+target format. It utilizes a cache object to read and retrieve data during the mapping process. The transformed
+record is returned in the target format. The class also provides a method to retrieve the query dictionary for
 the target format.
 
-Overall, this code facilitates the conversion of data from a specific source format (synthetic financial datasets) to a 
-target format. The Parser class handles the general conversion process, while the SFDToTarget class focuses on the 
+Overall, this code facilitates the conversion of data from a specific source format (e.g., synthetic financial datasets) to a
+target format. The Parser class handles the general conversion process, while the SFDToTarget class focuses on the
 specific mapping for synthetic financial datasets to the target format.
-
-The model can be used as follows:
-
-parser = Parser(
-    source="synthetic_financial_datasets",
-    target="target",
-    source_parser_file_path="path/to/source/parser_definition.json",
-    target_parser_file_path="path/to/target/parser_definition.json"
-)
-target_types = parser.get_target_types()
-source_types = parser.get_source_types()
-#if necessary
-query = {"key": "value"}
-parser.set_query(query)
-cache_conf_args = {"arg1": value1, "arg2": value2}
-sfd_to_target = SFDToTarget(cache_conf_args)
-def map(self, record):
-    cache = Cache.from_conf(**self._cache_conf_args)
-    return transformed_record
-query_dict = SFDToTarget.get_query()
-
 '''
 from __future__ import annotations
 import json

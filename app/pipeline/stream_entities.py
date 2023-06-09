@@ -1,24 +1,17 @@
 '''
-The purpose of this code is to provide a streaming pipeline for processing and storing entities 
-(such as User, Account, and Bank) from different sources into a Cassandra database. It utilizes 
-Apache Flink and the pyflink library to establish a streaming environment and connect to Kafka 
-as the data source. 
-The code defines the StreamEntities class, which is responsible for executing the streaming environment 
+The purpose of this code is to provide a streaming pipeline for processing and storing entities
+(such as User, Account, and Bank) from different sources into a Cassandra database. It utilizes
+Apache Flink and the pyflink library to establish a streaming environment and connect to Kafka
+as the data source.
+The code defines the StreamEntities class, which is responsible for executing the streaming environment
 for each entity defined in the configuration.
 
 The execute_env method sets up the streaming environment by creating a Kafka consumer for the specific
 entity, configuring the database sink, and defining the data types and query dictionary based on the entity type.
 It then adds the Kafka source, configures the Cassandra sink, and executes the streaming environment.
 
-The submit_all method iterates over all entities defined in the configuration and calls the execute_env method for 
+The submit_all method iterates over all entities defined in the configuration and calls the execute_env method for
 each entity, submitting the streaming process.
-
-The module can be used as follows:
-
-conf = Configuration()  
-db_conf_args = {...}  
-stream_entities = StreamEntities(conf, db_conf_args)
-stream_entities.submit_all()
 '''
 from __future__ import annotations
 from pyflink.datastream import StreamExecutionEnvironment

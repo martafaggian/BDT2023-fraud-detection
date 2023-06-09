@@ -6,12 +6,6 @@ The main branch is processed for fraud detection, and the results are saved to a
 as transactions. The side branch is used to update account balances in the Cassandra database.
 The code allows for parallel execution of the streaming process and integrates with Cassandra for 
 storing transaction data and updating account balances.
-
-This module can be used as follows:
-
-streamer = StreamTransactions(conf, cache_conf_args, db_conf_args)
-streamer.submit_all()
-
 '''
 
 from __future__ import annotations

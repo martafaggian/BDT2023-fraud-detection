@@ -1,10 +1,10 @@
 '''
-This code snippet is the main entry point for executing the streaming 
+This code snippet is the main entry point for executing the streaming
 processes for transactions and entities using Apache Flink.
-The code loads a configuration file, establishes connections to a cache and a database 
-based on the provided configurations, transfers account data from Cassandra to the cache, 
-and then initiates the streaming of transactions and entities. The specific behavior and 
-actions performed within the StreamTransactions and StreamEntities classes will depend on 
+The code loads a configuration file, establishes connections to a cache and a database
+based on the provided configurations, transfers account data from Cassandra to the cache,
+and then initiates the streaming of transactions and entities. The specific behavior and
+actions performed within the StreamTransactions and StreamEntities classes will depend on
 their implementation and the provided configurations.
 
 '''
