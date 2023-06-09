@@ -170,7 +170,7 @@ Useful commands for handling the streamers are:
 ./stream_interrupt.sh # Interrupt all streamers. Requires a new start afterwards.
 ```
 
-<img src="./img/stream_interrupts.gif" alt="stream interrupts demo" width="70%"/>
+<img src="./img/stream_interrupt.gif" alt="stream interrupt demo" width="70%"/>
 
 A configuration example is the following:
 
