@@ -56,7 +56,7 @@ class Account:
         Writes the account object to a cache with the specified key.
 
         :param cache: The cache object to write the data to
-        :type cache:
+        :type cache: Cache
         :param keyprefix: Prefix to prepend to the key
         :type keyprefix: str
         '''
@@ -70,7 +70,7 @@ class Account:
         Submits the account object to the specified broker.
 
         :param broker: The broker to submit the data to
-        :type broker:
+        :type broker: 
         '''
         # broker.send(self.to_json(), topic)
         broker.send(self.to_dict(), topic)
@@ -99,6 +99,14 @@ class Account:
 
     @staticmethod
     def cassandra_to_cache(cache, db):
+        '''
+        Transfers account data from a Cassandra database to a cache.
+        
+        :param cache: The cache instance used for storing account data.
+        :type cache: Cache
+        :param db: The Cassandra database instance.
+        :type db: Database
+        '''
         res = db.execute(f"SELECT account_id, bank_id, user_id, type FROM {DatabaseTables.ACCOUNTS}")
         df = pd.DataFrame(res)
         keys = df.pop("account_id")
@@ -107,6 +115,14 @@ class Account:
 
     @staticmethod
     def get_query_dict(auto_id = True):
+        '''
+        Returns a query dictionary representing a template for retrieving account data.
+
+        :param auto_id: A flag indicating whether to use auto-generated account IDs or placeholders.
+        :type auto_id: bool
+        :return: The query dictionary representing the template.
+        :rtype: dict
+        '''
         acc_id = "CAST(uuid() AS TEXT)" if auto_id else "?"
         return {
             'account_id' : acc_id,
