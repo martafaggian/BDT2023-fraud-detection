@@ -343,8 +343,42 @@ The following interfaces can be accessed:
 * **Grafana Dashboard**: localhost:**3000**
 * **Flink Dashboard**: localhost:**8081**
 * **Kafka-UI**: localhost:**8080**
-
+* 
 More services and relative ports can be found in the docker compose file. 
+
+### 6.2. Services
+
+A configuration example for the services is the following:
+
+```yaml
+cassandra:
+  host: cassandra-1
+  port: 9042
+  keyspace: fraud_detection
+  username: null
+  password: null
+
+flink:
+  parser:
+    parallelism: 2
+
+kafka:
+  host: kafka
+  port: 9092
+
+redis:
+  host: redis
+  port: 6379
+  accounts:
+    file: ./data/accounts.csv # file to use if you want to load accounts in cache from a csv. By default they are loaded directly from cassandra.
+    db: 1
+  streamers:
+    db: 0
+```
+
+> **Note** if you want to access these services from the local machine, change hosts into **localhost**, otherwise use names of docker containers as hosts for inter-container communication.
+
+> **Note** don't set username and passwords for cassandra if you want to use pyflink. It does not support authentication (or, at least, we were not able to configure it) 
 
 ## TODOs
 
