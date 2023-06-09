@@ -329,7 +329,7 @@ entities:
 ## 5. Database
 
 By default, the cassandra cluster is created with 3 nodes from the docker compose.
-The default database schema is depicted in section (#24-physical-model).
+The default database schema is depicted in [Section 2.4](#24-physical-model).
 
 ### 5.1. Add entities
 
@@ -351,6 +351,10 @@ The final visualization consists in a grafana dashboard with several panels show
 
 ![grafana demo](./img/grafana.gif)
 
+A user-oriented dashboard is also provided using Flask and Dash frameworks, that allow users to see all of their transactions:
+
+![flask demo](./img/flask.gif)
+
 ### 6.1. Interfaces
 
 The following interfaces can be accessed:
@@ -358,6 +362,7 @@ The following interfaces can be accessed:
 * **Flink Dashboard**: localhost:**8081**
 * **Kafka-UI**: localhost:**8080**
 * **Flask-Dash dashobard**: localhost:**5050**
+
 More services and relative ports can be found in the docker compose file. 
 
 ### 6.2. Services
