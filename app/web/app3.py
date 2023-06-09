@@ -1,18 +1,32 @@
 from flask import Flask
+from omegaconf import OmegaConf
 from dash import Dash, html, dcc, Input, Output
 import dash_bootstrap_components as dbc
 import pandas as pd
+from app.infrastructure import Database
 
 
 app3 = Flask(__name__)
 
-
 dash_app = Dash(__name__, server=app3, suppress_callback_exceptions=True, external_stylesheets= [dbc.themes.SOLAR],
             url_base_pathname='/')
 
-df = pd.read_csv('transactions.csv')
-data = df[['user_id','transaction_id', 'timestamp', 'amount', 'account_type', 'account_id','is_fraud']]
-users = data['user_id'].unique()
+conf = OmegaConf.load('config.yaml')
+db = Database.from_conf("cassandra-web", conf.cassandra, conf.logs)
+data = pd.DataFrame(db.execute("""
+    SELECT user_id, transaction_id,
+    timestamp, amount, account_type,
+    account_id, is_fraud FROM
+    fraud_detection.transactions"""))
+
+users = data.user_id.unique()
+
+# There may be a lot of users with empty transactions. For a real
+# system, use the following:
+# users = pd.DataFrame(db.execute("""
+    # SELECT user_id FROM
+    # fraud_detection.users
+# """)).user_id.values 
 
 fraud_row_style = {'background-color': 'salmon', 'color': 'white'}
 non_fraud_row_style = {'background-color': 'green', 'color': 'white'}
@@ -46,7 +60,12 @@ dash_app.layout = dbc.Container([html.Div([
 def update_transactions_table(user_id):
     if user_id is None:
         return []
-    transactions = data.loc[data['user_id'] == user_id]
+    transactions = pd.DataFrame(db.execute(f"""
+        SELECT user_id, transaction_id,
+        timestamp, amount, account_type,
+        account_id, is_fraud FROM
+        fraud_detection.transactions_by_user
+        WHERE user_id = '{user_id}' ALLOW FILTERING"""))
 
     rows = []
     for index, row in transactions.iterrows():
