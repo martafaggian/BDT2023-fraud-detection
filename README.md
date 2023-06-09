@@ -45,7 +45,14 @@ pip install -r requirements.txt
 
 ## 1. Introduction
 
-![workflow demo](./img/workflow.gif)
+The project requirement was the following:
+> Create an intelligent fraud detection platform leveraging Big Data technologies. Your system would ingest transactional data from various sources (e.g., credit cards, bank accounts, investment portfolios), process unlimited events per second, perform statistical analyses of transactions, compare them against historic norms, and flag suspicious activities in milliseconds (or slightly more, well..).
+
+The pipeline design is the following:
+
+![pipeline design](./img/pipeline_design.jpg)
+
+**TODO: insert pipeline image here** 
 
 ## 2. Streamers
 
