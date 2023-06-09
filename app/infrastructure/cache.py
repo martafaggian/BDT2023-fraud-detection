@@ -5,26 +5,9 @@ exception class for handling cache connection errors.
 
 The module can be used as follows:
 
-from cache import Cache
-from app.utils import Logger
+logger = Logger(...)
 
-logger = Logger()
-
-conf_cache = {
-    "host": "localhost",
-    "port": 6379
-}
-
-conf_log = {
-    "dir": "./logs",
-    "info_file": "info.log",
-    "warning_file": "warning.log",
-    "error_file": "error.log",
-    "critical_file": "critical.log",
-    "debug_file": "debug.log"
-}
-
-cache = Cache.from_conf("run_name", conf_cache, conf_log, db=0)
+cache = Cache(logger=logger, host='localhost', port=6379, db=0)
 cache.write("key1", "value1")
 
 value = cache.read("key1")
@@ -74,9 +57,6 @@ class Cache:
         db: int = 0,
         decode_responses: bool = True
     ):
-
-        #memorizza l'host, la porta, il numero del database Redis e crea un oggetto Redis
-        #per la connessione al cache
         self._host = host
         self._port = port
         self._db = db

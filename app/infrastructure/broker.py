@@ -9,19 +9,26 @@ The Consumer class uses the KafkaConsumer class from the kafka library to connec
 broker and retrieve messages. The retrieve method retrieves messages from the broker and prints
 them.
 
+The Broker class is the interface for the Producer and Consumer
+classes, since it suggests common methods for working with Kafka brokers.
+The Consumer class is also proposed as an abstract class, since the
+retrieval of the messages and their handling must be treated
+differently based on use cases.
+
 There are also ConsumerFlink and ProducerFlink classes that are specific to working with the
 Flink Kafka connector. These classes use the FlinkKafkaConsumer and FlinkKafkaProducer classes
 from the pyflink.datastream.connectors module.
 
-To use these classes, you would need to create an instance of the desired class and call the
-appropriate methods. For example, to create a Producer instance and send a message, you can
-use the following code:
+A usage example is the following:
+
+logger = Logger(...)
+
+consumer = ConsumerPrint(host='localhost', port=9092, logger=logger)
+consumer.subscribe('my_topic')
+consumer.retrieve()
+
 producer = Producer(host='localhost', port=9092, logger=logger)
 producer.send('Hello, Kafka!', topic='my_topic')
-
-To create a Consumer instance and retrieve messages, you can use the following code:
-consumer = Consumer(host='localhost', port=9092, logger=logger)
-consumer.retrieve()
 '''
 
 from __future__ import annotations
@@ -156,10 +163,10 @@ class Producer(Broker):
         '''
         Send a message to a topic.
 
-         :param message: The message to send.
-         :type message: str
-         :param topic: The topic to send the message to.
-         :type topic: str
+        :param message: The message to send.
+        :type message: str
+        :param topic: The topic to send the message to.
+        :type topic: str
         '''
         try:
             self.check_connected()
@@ -338,6 +345,7 @@ class ConsumerFlink(Broker):
 class ProducerFlink(Broker):
     '''
     Producer class for Flink Kafka connector
+    WARNING: this class is untested, since it is never used
 
     :param host: The broker host
     :type host: str

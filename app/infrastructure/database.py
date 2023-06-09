@@ -8,7 +8,7 @@ Overall, this module simplifies Cassandra database operations by providing a con
 configurable interface.
 
 The module can be used as follow:
-logger = Logger()
+logger = Logger(...)
 
 host = 'localhost'
 port = 9042
@@ -23,20 +23,14 @@ if database.is_connected():
 else:
     print("Database is not connected!")
 
-new_keyspace = 'new_keyspace'
-database.set_keyspace(new_keyspace)
+my_keyspace = 'my_keyspace'
+database.set_keyspace(my_keyspace)
 print(f"Keyspace set to: {database.get_keyspace()}")
 
 query = "SELECT * FROM my_table"
 result = database.execute(query)
 for row in result:
     print(row)
-
-table_name = DatabaseTables.ACCOUNTS
-keys = ['id', 'name', 'balance']
-values = ['id_val', 'name_val', 'balance_val']
-insert_query = database.get_insert_query(table_name, keys, values)
-print(f"Insert query: {insert_query}")
 '''
 
 from __future__ import annotations
@@ -46,12 +40,19 @@ from cassandra.auth import PlainTextAuthProvider
 from app.utils import Logger
 
 class DatabaseTables(str, Enum):
+    '''
+    Defines names of database tables
+    '''
     ACCOUNTS = 'accounts'
     TRANSACTIONS = 'transactions'
     BANKS = 'banks'
     USERS = 'users'
 
 class DatabaseNotConnectedException(Exception):
+    '''
+    Redefinition of the base Exception class for handling
+    database connection errors
+    '''
     def __init__(self, logger, message, *args):
         super().__init__(message)
         self.args = args
