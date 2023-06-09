@@ -5,7 +5,10 @@
 For navigating the live demo (final [grafana dashboard](#6-visualization)), you can visit:
 > URL: **[bdt.davidecalza.com](https://bdt.davidecalza.com)**
 > <br />User: **guest**
-> <br />Password: **BDT2023**
+> <br />Password: **BDT2023** 
+
+For navigating the Flask-Dash Dashboard, you can visit:
+> URL: **[davidecalza.com:5050](https://davidecalza.com:5050)**
 
 > **Warning** due to recently frequent disconnections from my ISP, the website may not be always reachable, since DNS cache takes some minutes to refresh after a change of my server's public IP. 
 
@@ -351,7 +354,7 @@ The following interfaces can be accessed:
 * **Grafana Dashboard**: localhost:**3000**
 * **Flink Dashboard**: localhost:**8081**
 * **Kafka-UI**: localhost:**8080**
-* 
+* **Flask-Dash dashobard**: localhost **5050**
 More services and relative ports can be found in the docker compose file. 
 
 ### 6.2. Services
