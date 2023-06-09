@@ -110,7 +110,7 @@ The pipeline design is the following:
 ## 2. Data Modeling
 
 The data modeling process was performed by following the indications proposed by
-[cassandra](https://cassandra.apache.org/doc/latest/cassandra/data_modeling.html) for a correct modeling of the data structure.
+[cassandra](https://cassandra.apache.org/doc/latest/cassandra/data_modeling/index.html) for a correct modeling of the data structure.
 > **Warning**
 > data modeling for cassandra requires a **query oriented** approach, different from the typical relational data modeling.
 
