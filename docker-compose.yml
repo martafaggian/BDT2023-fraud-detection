@@ -229,6 +229,22 @@ services:
       streamer-net:
         ipv4_address: 172.28.1.8
 
+  # === Web App === #
+
+  web:
+    build:
+      context: .
+      dockerfile: app/web/Dockerfile
+    container_name: web
+    restart: always
+    ports:
+      - "5050:5050"
+      - "2070:2070"
+      - "1111:1111"
+    networks:
+      db-net:
+        ipv4_address: 172.28.0.10
+
 networks:
   streamer-net:
     name: streamer-net
