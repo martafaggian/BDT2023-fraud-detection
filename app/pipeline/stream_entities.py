@@ -13,6 +13,12 @@ It then adds the Kafka source, configures the Cassandra sink, and executes the s
 The submit_all method iterates over all entities defined in the configuration and calls the execute_env method for 
 each entity, submitting the streaming process.
 
+The module can be used as follows:
+
+conf = Configuration()  
+db_conf_args = {...}  
+stream_entities = StreamEntities(conf, db_conf_args)
+stream_entities.submit_all()
 '''
 from __future__ import annotations
 from pyflink.datastream import StreamExecutionEnvironment
