@@ -403,9 +403,9 @@ redis:
 
 ### General
 - [ ] Auto download libs from gdrive with gdown
-- [ ] Write README.md
+- [x] Write README.md
 - [x] Dockerize the software
-- [ ] Write documentation
+- [x] Write documentation
 - [x] Add utils scripts:
     - [x] start/enable/stop/interrupt_streamers.sh
     - [x] add user/account/bank to cassandra
