@@ -1,17 +1,5 @@
 # BTD2023-fraud-detection
 
-## Live Demo
-
-For navigating the live demo (final [grafana dashboard](#6-visualization)), you can visit:
-> URL: **[bdt.davidecalza.com](https://bdt.davidecalza.com)**
-> <br />User: **guest**
-> <br />Password: **BDT2023** 
-
-For navigating the Flask-Dash Dashboard, you can visit:
-> URL: **[davidecalza.com:5050](https://davidecalza.com:5050)**
-
-> **Warning** due to recently frequent disconnections from my ISP, the website may not be always reachable, since DNS cache takes some minutes to refresh after a change of my server's public IP. 
-
 ## Initial setup
 
 The workflow requires an initial data sources location in the path:
@@ -403,9 +391,9 @@ redis:
 
 ### General
 - [ ] Auto download libs from gdrive with gdown
-- [ ] Write README.md
+- [x] Write README.md
 - [x] Dockerize the software
-- [ ] Write documentation
+- [x] Write documentation
 - [x] Add utils scripts:
     - [x] start/enable/stop/interrupt_streamers.sh
     - [x] add user/account/bank to cassandra
