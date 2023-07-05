@@ -24,8 +24,8 @@ external_stylesheets = [dbc.themes.SOLAR]
 app1 = Dash(__name__, server=app_flask1, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True,
            url_base_pathname='/')
 
-data = pd.read_csv('transactions.csv')
-users = data['user_id'].unique()
+# data = pd.read_csv('transactions.csv')
+# users = data['user_id'].unique()
 
 app1.layout = html.Div([
     dbc.Container([

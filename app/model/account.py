@@ -107,9 +107,10 @@ class Account:
         '''
         res = db.execute(f"SELECT account_id, bank_id, user_id, type FROM {DatabaseTables.ACCOUNTS}")
         df = pd.DataFrame(res)
-        keys = df.pop("account_id")
-        values = df.to_dict(orient="records")
-        cache.write_multiple(keys, values, is_dict=True)
+        if len(df) > 0:
+            keys = df.pop("account_id")
+            values = df.to_dict(orient="records")
+            cache.write_multiple(keys, values, is_dict=True)
 
     @staticmethod
     def get_query_dict(auto_id = True):
